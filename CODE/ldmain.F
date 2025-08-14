@@ -180,6 +180,9 @@ PROGRAM ldmain
 
     N1 = MOD ( ITTNOW , 2 ) + 1
     N2 = MOD ( ITTNOW - 1, 2 ) + 1
+    NSWAP = N1
+    N1    = N2
+    N2    = NSWAP
 
     !  Simluation Run
     elapse_time = ( mod( ITTNOW , NXSAVG ) ) * origin_dt

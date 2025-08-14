@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------- 
 
 set echo  # echoes the commands
-set expname = advection_test50uv_sq
+set expname = advection_test50w_sq_3rd
 
 # set paths
 set vvmdir = ` pwd | rev | cut -d/ -f 3- | rev `

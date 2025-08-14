@@ -1,4 +1,6 @@
 #!/bin/csh
+#SBATCH --partition=mogamd
+
 # Script which compiles and calls the Fortran executable and 
 # runs the simulation.
 # This script is called by the batch script "btch_vvcm_cam".
@@ -13,7 +15,7 @@
 # Example: make INTEL=true DEBUG=true
 
 set echo  # echoes the commands
-set expname = advection_test50uv_sq
+set expname = advection_test50w_sq_3rd
 
 # set job system and compiler
 set compiler = 'intel_mogamd'
@@ -46,7 +48,7 @@ endif
 
 # compile both create_topolsm and vvm
 make RUNDIR=${blddir} CASENAME=${expname} CODEDIR=${codedir} EXPDIR=${expdir} COMPILER=${compiler} -f ${blddir}/makefile newtopo
-make RUNDIR=${blddir} CASENAME=${expname} CODEDIR=${codedir} EXPDIR=${expdir} COMPILER=${compiler} -f ${blddir}/makefile -j8
+make RUNDIR=${blddir} CASENAME=${expname} CODEDIR=${codedir} EXPDIR=${expdir} COMPILER=${compiler} -f ${blddir}/makefile -j32
 
 # Set walltime to large number instead of marking it if you don't need it.
 sed -e 's/expname.out/'${expname}'.out/g' \

@@ -64,8 +64,8 @@ CONTAINS
       Q2LS=0.
       WLS=0.
 
-      UG=5.
-      VG=5.
+      UG=0.
+      VG=0.
 
   ENDSUBROUTINE USER_set_mean_profile_and_SST
 
@@ -109,6 +109,13 @@ CONTAINS
       REAL(dbl_kind)    :: glob_idx_i, glob_idx_j
       REAL(dbl_kind)    :: radius_norm
    
+      do i = 1, mi1
+      do j = 1, mj1
+      do k = 1, nk2
+          th3d(i,j,k) = 300.
+      enddo
+      enddo
+      enddo
 
       !! bubble example
       i = int(mi1/2)
@@ -116,7 +123,7 @@ CONTAINS
       k = int(nk2/2)
       do i = int(mi1/4), int(mi1*3/4)
       do j = int(mj1/4), int(mj1*3/4)
-          th3d(i,j,k) = th3d(i,j,k)+50.
+          th3d(i,j,k) = th3d(i,j,k) + 50.
       enddo
       enddo
 
@@ -561,6 +568,9 @@ CONTAINS
 
   160 CONTINUE
 
+      
+      ! THBAR = 300.
+
       IF (MY_TASK .EQ. 0 ) PRINT*,(PIBAR(K),PBAR(K),K,K=1,NK3)
 
 !     PROFILES OF RHO, RHOz
@@ -574,13 +584,16 @@ CONTAINS
       DO 180 K = 2, NK2
       ALPHAW = ( ALPHA(K) + ALPHA(K+1) ) / 2.
       RHOz(K) = 1. / ALPHAW
+      RHOz(K) = 1.
   180 CONTINUE
 
 !     SURFACE DENSITY
 
       RHOz(1) = PSFC / ( RGAS * TV(1) )
+      RHOz(1) = 1.
       DO 190 K = 2, NK3
       RHO(K) = 1. / ALPHA(K)
+      RHO(K) = 1.
   190 CONTINUE
 
 

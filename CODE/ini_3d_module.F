@@ -121,51 +121,51 @@ CONTAINS
       locean = .true.
       psfx = .false.
 
-      if(my_task == 0) then
-      INQUIRE(iolength=k) temp
-      OPEN(UNIT=99,FILE='bar.dat',FORM='unformatted',STATUS='unknown', &
-      access='direct',recl=k,CONVERT="LITTLE_ENDIAN")
-      temp=pbar(1:NK2)
-      write(99,rec=1) temp
-      temp=pibar(1:NK2)
-      write(99,rec=2) temp
-      temp=rho(1:NK2)
-      write(99,rec=3) temp
-      temp=thbar(1:NK2)
-      write(99,rec=4) temp
-      temp=qvbar(1:NK2)
-      write(99,rec=5) temp
-      temp=UG(1:NK2)
-      write(99,rec=6) temp
-      temp=VG(1:NK2)
-      write(99,rec=7) temp
-      temp=Q1LS(1:NK2)
-      write(99,rec=8) temp
-      temp=Q2LS(1:NK2)
-      write(99,rec=9) temp
-      temp=WLS(1:NK2)
-      write(99,rec=10) temp
-      ! dzt
-      DO k=1,nk2
-        temp(k) = DZ/FNT(K)
-      ENDDO
-      write(99,rec=11) temp
-      ! theta_e bar
-      DO k=1,nk2
-        dum1 = THBAR(K)*PIBAR(K) ! temperature
-        temp(k) = THBAR(k)*(1+2.5e6*QVBAR(k) / (1004.*dum1 ) )
-      ENDDO
-      write(99,rec=12) temp
-      ! theta_es bar
-      DO k=1,nk2
-        dum1 = THBAR(K)*PIBAR(K) ! temperature [K]
-        dum3 = ES ( dum1 ) ! es[Pa]
-        dum2 = dum3 * 0.622 / ( PBAR(K) - dum3 ) ! qvs [kg/kg]
-        temp(k) = THBAR(k)*(1+2.5e6*dum2 / (1004.*dum1) ) 
-      ENDDO
-      write(99,rec=13) temp
-      CLOSE(99)
-      endif
+      ! if(my_task == 0) then
+      ! INQUIRE(iolength=k) temp
+      ! OPEN(UNIT=99,FILE='bar.dat',FORM='unformatted',STATUS='unknown', &
+      ! access='direct',recl=k,CONVERT="LITTLE_ENDIAN")
+      ! temp=pbar(1:NK2)
+      ! write(99,rec=1) temp
+      ! temp=pibar(1:NK2)
+      ! write(99,rec=2) temp
+      ! temp=rho(1:NK2)
+      ! write(99,rec=3) temp
+      ! temp=thbar(1:NK2)
+      ! write(99,rec=4) temp
+      ! temp=qvbar(1:NK2)
+      ! write(99,rec=5) temp
+      ! temp=UG(1:NK2)
+      ! write(99,rec=6) temp
+      ! temp=VG(1:NK2)
+      ! write(99,rec=7) temp
+      ! temp=Q1LS(1:NK2)
+      ! write(99,rec=8) temp
+      ! temp=Q2LS(1:NK2)
+      ! write(99,rec=9) temp
+      ! temp=WLS(1:NK2)
+      ! write(99,rec=10) temp
+      ! ! dzt
+      ! DO k=1,nk2
+      !   temp(k) = DZ/FNT(K)
+      ! ENDDO
+      ! write(99,rec=11) temp
+      ! ! theta_e bar
+      ! DO k=1,nk2
+      !   dum1 = THBAR(K)*PIBAR(K) ! temperature
+      !   temp(k) = THBAR(k)*(1+2.5e6*QVBAR(k) / (1004.*dum1 ) )
+      ! ENDDO
+      ! write(99,rec=12) temp
+      ! ! theta_es bar
+      ! DO k=1,nk2
+      !   dum1 = THBAR(K)*PIBAR(K) ! temperature [K]
+      !   dum3 = ES ( dum1 ) ! es[Pa]
+      !   dum2 = dum3 * 0.622 / ( PBAR(K) - dum3 ) ! qvs [kg/kg]
+      !   temp(k) = THBAR(k)*(1+2.5e6*dum2 / (1004.*dum1) ) 
+      ! ENDDO
+      ! write(99,rec=13) temp
+      ! CLOSE(99)
+      ! endif
 
 
 !      IF (MY_TASK .EQ. 0) PRINT*,(K,ZT(K),DZ/FNT(K),K=1,NK2)
