@@ -112,20 +112,37 @@ CONTAINS
       do i = 1, mi1
       do j = 1, mj1
       do k = 1, nk2
+          glob_idx_j = real(mj1*nj_sbdm+j)
+          glob_idx_i = real(mi1*ni_sbdm+i)
           th3d(i,j,k) = 300.
+          U3DX(i,j,k) = MI_glob/2-glob_idx_i
+          U3DY(i,j,k) = -(MJ_glob/2-glob_idx_j)
       enddo
       enddo
       enddo
+      call bound_arb(nk3,u3dx)
+      call bound_arb(nk3,u3dy)
 
       !! bubble example
+      print *, glob_idx_i
       i = int(mi1/2)
       j = int(mj1/2)
       k = int(nk2/2)
-      do i = int(mi1/4), int(mi1*3/4)
-      do j = int(mj1/4), int(mj1*3/4)
+      do i = mim, mip
+      do j = mjm, mjp
+          glob_idx_j = real(mj1*nj_sbdm+j)
+          glob_idx_i = real(mi1*ni_sbdm+i)
+          if (MI_glob/2-3 .LE. glob_idx_i .and. glob_idx_i .LE. MI_glob/2+3 .and. \
+          MJ_glob/2-3 .LE. glob_idx_j .and. glob_idx_j .LE. MJ_glob/2+3) then
+              Z3DX(i,j,k) = 50.
+              Z3DY(i,j,k) = 50.
+          endif
+
           th3d(i,j,k) = th3d(i,j,k) + 50.
       enddo
       enddo
+      call bound_arb(nk3,Z3DX)
+      call bound_arb(nk3,Z3DY)
 
 
       ! DO K = 1, NK3
@@ -569,7 +586,7 @@ CONTAINS
   160 CONTINUE
 
       
-      ! THBAR = 300.
+      THBAR = 300.
 
       IF (MY_TASK .EQ. 0 ) PRINT*,(PIBAR(K),PBAR(K),K,K=1,NK3)
 

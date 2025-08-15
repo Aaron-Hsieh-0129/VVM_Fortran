@@ -74,7 +74,7 @@ CONTAINS
 
      CALL RKSI_3D ( N1, N2, ZXew,ZXns,Uew,Vns)
      CALL RETA_3D ( N1, N2, ZYew,ZYns,Uew,Vns)
-     CALL ZETA_3D ( N1, N2, ZZew,ZZns,Uew(:,:,nk2),Vns(:,:,nk2))
+     ! CALL ZETA_3D ( N1, N2, ZZew,ZZns,Uew(:,:,nk2),Vns(:,:,nk2))
 
       do k = 1,nk2
         do j = mjm,mjp
@@ -282,11 +282,11 @@ CONTAINS
                +fact2(k)*RHOU(K)*(UEW(1,J+1,K)+UEW(1,J,K)))
   103 CONTINUE
 
-      CALL VADVEC_1HX (UWND,z3dx(:,:,k),zew(:,:,k),DX,FINALX)
+      ! CALL VADVEC_1HX (UWND,z3dx(:,:,k),zew(:,:,k),DX,FINALX)
 
       DO 106 J=1,MJ1
       DO 106 I=1,MI1
-      FZX(I,J,K,L)=FINALX(I,J)
+      ! FZX(I,J,K,L)=FINALX(I,J)
   106 CONTINUE
 
   100 CONTINUE
@@ -308,11 +308,11 @@ CONTAINS
                +fact2(k)*RHOU(K)*(U3DY(I,mjm,K)+VNS(I,1,K)))
   113 CONTINUE
 
-      CALL VADVEC_1HY (VWND,z3dx(:,:,k),zns(:,:,k),DYNEW,FINALY)
+      ! CALL VADVEC_1HY (VWND,z3dx(:,:,k),zns(:,:,k),DYNEW,FINALY)
 
       DO 116 J = 1, MJ1
       DO 116 I = 1, MI1
-      FZX(I,J,K,L)=FZX(I,J,K,L)+FINALY(i,J)
+      ! FZX(I,J,K,L)=FZX(I,J,K,L)+FINALY(i,J)
   116 CONTINUE
 
   110 CONTINUE
@@ -330,10 +330,10 @@ CONTAINS
       QVER(K)=Z3DX(I,J,K)
   124 CONTINUE
 
-      CALL VADVEC_1V (WWND,QVER,FNZ,NK1,NK2,NK3,DZ,FINALZ)
+      ! CALL VADVEC_1V (WWND,QVER,FNZ,NK1,NK2,NK3,DZ,FINALZ)
 
       DO 126 K=2,NK1
-      FZX(I,J,K,L)=FZX(I,J,K,L)+FINALZ(K)
+      ! FZX(I,J,K,L)=FZX(I,J,K,L)+FINALZ(K)
   126 CONTINUE
 
   120 CONTINUE
@@ -357,6 +357,14 @@ CONTAINS
       DO 310 I = 1, MI1
       TERM1(I,J,K)=TERM1(I,J,K)/(8.*DX)
   310 CONTINUE
+
+      ! do j = 1, MJ1
+      ! do i = 1, MI1
+      !   write(*, '(F10.5)', advance='no') TERM1(i, j, 17)
+      ! end do
+      ! print *
+      ! end do
+      ! STOP 1
 !=====================
 !     TWISTING TERMS
 !     (3.33) in Jung & Arakawa (2005) 
@@ -400,13 +408,17 @@ CONTAINS
       DO 440 J = 1, MJ1
       DO 440 I = 1, MI1
       TERM3(I,J,K)=TERM3(I,J,K)/16.
+
+      TERM2(I,J,K)=0.
+      TERM3(I,J,K)=0.
   440 CONTINUE
 
       DO 500 K = 2,NK1
       DO 500 J = 1,MJ1
       DO 500 I = 1,MI1
-      FZX(I,J,K,L)=FZX(I,J,K,L)                       &
-                  +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
+      ! FZX(I,J,K,L)=FZX(I,J,K,L)                       &
+      !             +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
+      FZX(I,J,K,L)=TERM1(I,J,K)
   500 CONTINUE
 
 
@@ -518,11 +530,11 @@ CONTAINS
                    +FACT2(K)*RHOU(K)*(U3DX(mim,J,K)+UEW(1,J,K)))
   103 CONTINUE
 
-      CALL VADVEC_1HX (UWND,z3dy(:,:,k),zew(:,:,k),DX,FINALX)
+      ! CALL VADVEC_1HX (UWND,z3dy(:,:,k),zew(:,:,k),DX,FINALX)
 
       DO 106 J=1,MJ1
       DO 106 I=1,MI1
-      FZY(I,J,K,L)=FINALX(I,j)
+      ! FZY(I,J,K,L)=FINALX(I,j)
   106 CONTINUE
       
   100 CONTINUE
@@ -543,11 +555,11 @@ CONTAINS
   113 CONTINUE
 
 
-      CALL VADVEC_1HY (VWND,z3dy(:,:,k),zns(:,:,k),DYNEW,FINALY)
+      ! CALL VADVEC_1HY (VWND,z3dy(:,:,k),zns(:,:,k),DYNEW,FINALY)
 
       DO 116 J = 1, MJ1
       DO 116 i = 1, Mi1
-      FZY(I,J,K,L)=FZY(I,J,K,L)+FINALY(i,J)
+      ! FZY(I,J,K,L)=FZY(I,J,K,L)+FINALY(i,J)
   116 CONTINUE
 
   110 CONTINUE
@@ -565,10 +577,10 @@ CONTAINS
       QVER(K)=Z3DY(I,J,K)
   124 CONTINUE
 
-      CALL VADVEC_1V (WWND,QVER,FNZ,NK1,NK2,NK3,DZ,FINALZ)
+      ! CALL VADVEC_1V (WWND,QVER,FNZ,NK1,NK2,NK3,DZ,FINALZ)
 
       DO 126 K=2,NK1
-      FZY(I,J,K,L)=FZY(I,J,K,L)+FINALZ(K)
+      ! FZY(I,J,K,L)=FZY(I,J,K,L)+FINALZ(K)
   126 CONTINUE
 
   120 CONTINUE
@@ -594,6 +606,13 @@ CONTAINS
       DO 508 I = 1, MI1
       TERM1(I,J,K)=TERM1(I,J,K)/(8.*DYNEW)
   508 CONTINUE
+      ! do j = 1, MJ1
+      ! do i = 1, MI1
+      !   write(*, '(F10.5)', advance='no') TERM1(i, j, 17)
+      ! end do
+      ! print *
+      ! end do
+      ! STOP 1
 !=====================
 !     TWISTING TERMS
 !=====================
@@ -641,8 +660,9 @@ CONTAINS
       DO 500 K = 2,NK1
       DO 500 J = 1,MJ1
       DO 500 I = 1,MI1
-      FZY(I,J,K,L)=FZY(I,J,K,L)                            &
-                  +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
+      ! FZY(I,J,K,L)=FZY(I,J,K,L)                            &
+      !             +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
+      FZY(I,J,K,L)=TERM1(I,J,K)
   500 CONTINUE
 
 #if defined (CORIOLIS)

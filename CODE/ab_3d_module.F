@@ -154,9 +154,9 @@ CONTAINS
       ! call timer_start('BUOYF_3D')
       ! CALL BUOYF_3D (BUOY)
       ! call timer_stop('BUOYF_3D')
-      ! call timer_start('VORT_3D')
-      ! CALL VORT_3D  ( N1, N2 )
-      ! call timer_stop('VORT_3D')
+      call timer_start('VORT_3D')
+      CALL VORT_3D  ( N1, N2 )
+      call timer_stop('VORT_3D')
 ! #if !defined (TURB_TOM)
 !       call timer_start('TURB_3D_VORT')
 !       CALL TURB_3D_VORT
