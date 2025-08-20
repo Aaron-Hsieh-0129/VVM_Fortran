@@ -115,8 +115,10 @@ CONTAINS
           glob_idx_j = real(mj1*nj_sbdm+j)
           glob_idx_i = real(mi1*ni_sbdm+i)
           th3d(i,j,k) = 300.
-          U3DX(i,j,k) = MI_glob/2-glob_idx_i
-          U3DY(i,j,k) = -(MJ_glob/2-glob_idx_j)
+          ! U3DX(i,j,k) = MI_glob/2-glob_idx_i
+          ! U3DY(i,j,k) = -(MJ_glob/2-glob_idx_j)
+          ! U3DX(i,j,k) = (MJ_glob/2-glob_idx_j)
+          U3DY(i,j,k) = (MI_glob/2-glob_idx_i)
       enddo
       enddo
       enddo
