@@ -72,7 +72,7 @@ CONTAINS
 
      call extend_zne (ZXew,ZXns,ZYew,ZYns,ZZew,ZZns,Uew,Vns)
 
-     CALL RKSI_3D ( N1, N2, ZXew,ZXns,Uew,Vns)
+     ! CALL RKSI_3D ( N1, N2, ZXew,ZXns,Uew,Vns)
      CALL RETA_3D ( N1, N2, ZYew,ZYns,Uew,Vns)
      ! CALL ZETA_3D ( N1, N2, ZZew,ZZns,Uew(:,:,nk2),Vns(:,:,nk2))
 
@@ -408,9 +408,6 @@ CONTAINS
       DO 440 J = 1, MJ1
       DO 440 I = 1, MI1
       TERM3(I,J,K)=TERM3(I,J,K)/16.
-
-      TERM2(I,J,K)=0.
-      TERM3(I,J,K)=0.
   440 CONTINUE
 
       DO 500 K = 2,NK1
@@ -418,8 +415,17 @@ CONTAINS
       DO 500 I = 1,MI1
       ! FZX(I,J,K,L)=FZX(I,J,K,L)                       &
       !             +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
-      FZX(I,J,K,L)=TERM1(I,J,K)
+      FZX(I,J,K,L)=TERM2(I,J,K) + TERM3(I,J,K)
   500 CONTINUE
+
+      ! do j = 1, MJ1
+      ! do i = 1, MI1
+      !   write(*, '(F10.5)', advance='no') FZX(i, j, 17, L)
+      !   write(*, '(F10.5)', advance='no') DEFXY(i, j, 17)
+      ! end do
+      ! print *
+      ! end do
+      ! STOP 1
 
 
 #if defined (CORIOLIS)
@@ -662,7 +668,8 @@ CONTAINS
       DO 500 I = 1,MI1
       ! FZY(I,J,K,L)=FZY(I,J,K,L)                            &
       !             +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
-      FZY(I,J,K,L)=TERM1(I,J,K)
+      ! FZY(I,J,K,L)=TERM1(I,J,K)
+      FZY(I,J,K,L)=TERM2(I,J,K) + TERM3(I,J,K)
   500 CONTINUE
 
 #if defined (CORIOLIS)

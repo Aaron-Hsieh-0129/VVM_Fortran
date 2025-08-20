@@ -327,6 +327,13 @@ CONTAINS
       DEFYZ(I,J,K)=(W3D(I,J+1,K)-W3D(I,J,K))/DYNEW   &
                   +(U3DY(I,J,K+1)-U3DY(I,J,K))*FNZ(K)/DZ
   710 CONTINUE
+      ! do j = 1, MJ1
+      ! do i = 1, MI1
+      !   write(*, '(F10.5)', advance='no') DEFXY(i, j, 17)
+      ! end do
+      ! print *
+      ! end do
+      ! STOP 1
 
 #if defined (PERIODIC)
       CALL BOUND_ARB (NK3,DEFXY)
