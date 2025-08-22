@@ -15,7 +15,7 @@
 # Example: make INTEL=true DEBUG=true
 
 set echo  # echoes the commands
-set expname = twisting_y
+set expname = zeta
 
 # set job system and compiler
 set compiler = 'intel_mogamd'

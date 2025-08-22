@@ -118,7 +118,8 @@ CONTAINS
           ! U3DX(i,j,k) = MI_glob/2-glob_idx_i
           ! U3DY(i,j,k) = -(MJ_glob/2-glob_idx_j)
           ! U3DX(i,j,k) = (MJ_glob/2-glob_idx_j)
-          U3DY(i,j,k) = (MI_glob/2-glob_idx_i)
+          U3DY(i,j,k) = (MJ_glob/2-(glob_idx_i+glob_idx_j)/2.)
+          U3DX(i,j,k) = (MI_glob/2-(glob_idx_i+glob_idx_j)/2.)
       enddo
       enddo
       enddo
@@ -138,13 +139,25 @@ CONTAINS
           MJ_glob/2-3 .LE. glob_idx_j .and. glob_idx_j .LE. MJ_glob/2+3) then
               Z3DX(i,j,k) = 50.
               Z3DY(i,j,k) = 50.
+              th3d(i,j,k) = th3d(i,j,k) + 50.
           endif
-
-          th3d(i,j,k) = th3d(i,j,k) + 50.
+      enddo
+      enddo
+      k = int(nk2)
+      do i = mim, mip
+      do j = mjm, mjp
+          glob_idx_j = real(mj1*nj_sbdm+j)
+          glob_idx_i = real(mi1*ni_sbdm+i)
+          if (MI_glob/2-3 .LE. glob_idx_i .and. glob_idx_i .LE. MI_glob/2+3 .and. \
+          MJ_glob/2-3 .LE. glob_idx_j .and. glob_idx_j .LE. MJ_glob/2+3) then
+              Z3DZ(i,j,k) = 50.
+              Z3DY(i,j,k-1) = 50.
+          endif
       enddo
       enddo
       call bound_arb(nk3,Z3DX)
       call bound_arb(nk3,Z3DY)
+      call bound_arb(nk3,Z3DZ)
 
 
       ! DO K = 1, NK3

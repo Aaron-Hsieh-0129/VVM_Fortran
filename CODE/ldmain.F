@@ -114,7 +114,7 @@ PROGRAM ldmain
         itt_align   ,   &
         ttl_time
     INTEGER (KIND=int_kind)  ::  &
-        itt_record
+        itt_record, K
 
 !-----------------------------------------------------------------------
 ! Initialize MPI environment and domain decomposition
@@ -148,6 +148,13 @@ PROGRAM ldmain
     if(my_task == 0) write(6,*) 'ITT=',ITT
 
     !  USE FORWARD SCHEME TO INITIALIZE
+
+    DO K = 1, NK2
+        print *, "K = ", K, ", FNT = ", FNT(K), ", FNZ = ", FNZ(K), &
+        ", ZT = ", ZT(K), ", ZZ = ", ZZ(K)
+        print *
+    ENDDO
+
 
     A = DT
     B = 0.
