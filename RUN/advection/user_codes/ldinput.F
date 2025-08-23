@@ -158,7 +158,7 @@ CONTAINS
       UVTAU   = 7200.
 
       NOTURB  = .FALSE.
-      BUOY    = .FALSE.
+      BUOY    = .TRUE.
       NOTHERM = .FALSE.
       NOSFX   = .FALSE.
 

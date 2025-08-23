@@ -115,11 +115,14 @@ CONTAINS
           glob_idx_j = real(mj1*nj_sbdm+j)
           glob_idx_i = real(mi1*ni_sbdm+i)
           th3d(i,j,k) = 300.
-          ! U3DX(i,j,k) = MI_glob/2-glob_idx_i
-          ! U3DY(i,j,k) = -(MJ_glob/2-glob_idx_j)
-          ! U3DX(i,j,k) = (MJ_glob/2-glob_idx_j)
-          U3DY(i,j,k) = (MJ_glob/2-(glob_idx_i+glob_idx_j)/2.)
-          U3DX(i,j,k) = (MI_glob/2-(glob_idx_i+glob_idx_j)/2.)
+          if (glob_idx_i .GE. 5 .AND. glob_idx_i .LE. MI_glob-3 .AND. &
+              glob_idx_j .GE. 5 .AND. glob_idx_j .LE. MJ_glob-3) then
+              ! U3DX(i,j,k) = MI_glob/2-glob_idx_i
+              ! U3DY(i,j,k) = -(MJ_glob/2-glob_idx_j)
+              ! U3DX(i,j,k) = (MJ_glob/2-glob_idx_j)
+              U3DY(i,j,k) = (MJ_glob/2-(glob_idx_i+glob_idx_j)/2.) / 8.
+              U3DX(i,j,k) = (MI_glob/2-(glob_idx_i+glob_idx_j)/2.) / 8.
+          endif
       enddo
       enddo
       enddo
@@ -142,6 +145,7 @@ CONTAINS
               th3d(i,j,k) = th3d(i,j,k) + 50.
           endif
       enddo
+      call bound_arb(nk2,TH3D)
       enddo
       k = int(nk2)
       do i = mim, mip

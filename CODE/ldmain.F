@@ -149,11 +149,11 @@ PROGRAM ldmain
 
     !  USE FORWARD SCHEME TO INITIALIZE
 
-    DO K = 1, NK2
-        print *, "K = ", K, ", FNT = ", FNT(K), ", FNZ = ", FNZ(K), &
-        ", ZT = ", ZT(K), ", ZZ = ", ZZ(K)
-        print *
-    ENDDO
+    ! DO K = 1, NK2
+    !     print *, "K = ", K, ", FNT = ", FNT(K), ", FNZ = ", FNZ(K), &
+    !     ", ZT = ", ZT(K), ", ZZ = ", ZZ(K)
+    !     print *
+    ! ENDDO
 
 
     A = DT

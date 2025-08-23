@@ -151,9 +151,9 @@ CONTAINS
       ! call timer_stop('Q_CHK_3D')
 
       ENDIF  
-      ! call timer_start('BUOYF_3D')
-      ! CALL BUOYF_3D (BUOY)
-      ! call timer_stop('BUOYF_3D')
+      call timer_start('BUOYF_3D')
+      CALL BUOYF_3D (BUOY)
+      call timer_stop('BUOYF_3D')
       call timer_start('VORT_3D')
       CALL VORT_3D  ( N1, N2 )
       call timer_stop('VORT_3D')
