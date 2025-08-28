@@ -165,9 +165,9 @@ CONTAINS
       ! call timer_start('VORT_3D_COREC')
       ! CALL VORT_3D_COREC
       ! call timer_stop('VORT_3D_COREC')
-      ! call timer_start('WIND_3D')
-      ! CALL WIND_3D  ( N1, N2 )
-      ! call timer_stop('WIND_3D')
+      call timer_start('WIND_3D')
+      CALL WIND_3D  ( N1, N2 )
+      call timer_stop('WIND_3D')
       ! call timer_start('UPDATE_TRACER')
       ! if (ntracer > 0) CALL UPDATE_TRACER ( ITT )
       ! call timer_stop('UPDATE_TRACER')

@@ -109,82 +109,87 @@ CONTAINS
       REAL(dbl_kind)    :: glob_idx_i, glob_idx_j
       REAL(dbl_kind)    :: radius_norm
    
-      do i = 1, mi1
-      do j = 1, mj1
-      do k = 1, nk2
-          glob_idx_j = real(mj1*nj_sbdm+j)
-          glob_idx_i = real(mi1*ni_sbdm+i)
-          th3d(i,j,k) = 300.
-          if (glob_idx_i .GE. 5 .AND. glob_idx_i .LE. MI_glob-3 .AND. &
-              glob_idx_j .GE. 5 .AND. glob_idx_j .LE. MJ_glob-3) then
-              ! U3DX(i,j,k) = MI_glob/2-glob_idx_i
-              ! U3DY(i,j,k) = -(MJ_glob/2-glob_idx_j)
-              ! U3DX(i,j,k) = (MJ_glob/2-glob_idx_j)
-              U3DY(i,j,k) = (MJ_glob/2-(glob_idx_i+glob_idx_j)/2.) / 8.
-              U3DX(i,j,k) = (MI_glob/2-(glob_idx_i+glob_idx_j)/2.) / 8.
-          endif
-      enddo
-      enddo
-      enddo
-      call bound_arb(nk3,u3dx)
-      call bound_arb(nk3,u3dy)
+      ! do i = 1, mi1
+      ! do j = 1, mj1
+      ! do k = 1, nk2
+      !     glob_idx_j = real(mj1*nj_sbdm+j)
+      !     glob_idx_i = real(mi1*ni_sbdm+i)
+      !     th3d(i,j,k) = 300.
+      !     if (glob_idx_i .GE. 5 .AND. glob_idx_i .LE. MI_glob-3 .AND. &
+      !         glob_idx_j .GE. 5 .AND. glob_idx_j .LE. MJ_glob-3) then
+      !         ! U3DX(i,j,k) = MI_glob/2-glob_idx_i
+      !         ! U3DY(i,j,k) = -(MJ_glob/2-glob_idx_j)
+      !         ! U3DX(i,j,k) = (MJ_glob/2-glob_idx_j)
+      !         U3DY(i,j,k) = (MJ_glob/2-(glob_idx_i+glob_idx_j)/2.) / 8.
+      !         U3DX(i,j,k) = (MI_glob/2-(glob_idx_i+glob_idx_j)/2.) / 8.
+      !     endif
+      ! enddo
+      ! enddo
+      ! enddo
+      ! call bound_arb(nk3,u3dx)
+      ! call bound_arb(nk3,u3dy)
 
       !! bubble example
-      print *, glob_idx_i
-      i = int(mi1/2)
-      j = int(mj1/2)
-      k = int(nk2/2)
-      do i = mim, mip
-      do j = mjm, mjp
-          glob_idx_j = real(mj1*nj_sbdm+j)
-          glob_idx_i = real(mi1*ni_sbdm+i)
-          if (MI_glob/2-3 .LE. glob_idx_i .and. glob_idx_i .LE. MI_glob/2+3 .and. \
-          MJ_glob/2-3 .LE. glob_idx_j .and. glob_idx_j .LE. MJ_glob/2+3) then
-              Z3DX(i,j,k) = 50.
-              Z3DY(i,j,k) = 50.
-              th3d(i,j,k) = th3d(i,j,k) + 50.
-          endif
-      enddo
-      call bound_arb(nk2,TH3D)
-      enddo
-      k = int(nk2)
-      do i = mim, mip
-      do j = mjm, mjp
-          glob_idx_j = real(mj1*nj_sbdm+j)
-          glob_idx_i = real(mi1*ni_sbdm+i)
-          if (MI_glob/2-3 .LE. glob_idx_i .and. glob_idx_i .LE. MI_glob/2+3 .and. \
-          MJ_glob/2-3 .LE. glob_idx_j .and. glob_idx_j .LE. MJ_glob/2+3) then
-              Z3DZ(i,j,k) = 50.
-              Z3DY(i,j,k-1) = 50.
-          endif
-      enddo
-      enddo
-      call bound_arb(nk3,Z3DX)
-      call bound_arb(nk3,Z3DY)
-      call bound_arb(nk3,Z3DZ)
+      ! print *, glob_idx_i
+      ! i = int(mi1/2)
+      ! j = int(mj1/2)
+      ! k = int(nk2/2)
+      ! do i = mim, mip
+      ! do j = mjm, mjp
+      !     glob_idx_j = real(mj1*nj_sbdm+j)
+      !     glob_idx_i = real(mi1*ni_sbdm+i)
+      !     if (MI_glob/2-3 .LE. glob_idx_i .and. glob_idx_i .LE. MI_glob/2+3 .and. \
+      !     MJ_glob/2-3 .LE. glob_idx_j .and. glob_idx_j .LE. MJ_glob/2+3) then
+      !         Z3DX(i,j,k) = 50.
+      !         Z3DY(i,j,k) = 50.
+      !         th3d(i,j,k) = th3d(i,j,k) + 50.
+      !     endif
+      ! enddo
+      ! call bound_arb(nk2,TH3D)
+      ! enddo
+      ! k = int(nk2)
+      ! do i = mim, mip
+      ! do j = mjm, mjp
+      !     glob_idx_j = real(mj1*nj_sbdm+j)
+      !     glob_idx_i = real(mi1*ni_sbdm+i)
+      !     if (MI_glob/2-3 .LE. glob_idx_i .and. glob_idx_i .LE. MI_glob/2+3 .and. \
+      !     MJ_glob/2-3 .LE. glob_idx_j .and. glob_idx_j .LE. MJ_glob/2+3) then
+      !         Z3DZ(i,j,k) = 50.
+      !         Z3DY(i,j,k-1) = 50.
+      !     endif
+      ! enddo
+      ! enddo
+      ! call bound_arb(nk3,Z3DX)
+      ! call bound_arb(nk3,Z3DY)
+      ! call bound_arb(nk3,Z3DZ)
 
 
-      ! DO K = 1, NK3
-      ! DO J = mjm,mjp
-      ! DO I = mim,mip
-      !   glob_idx_j = real(mj1*nj_sbdm+j)
-      !   glob_idx_i = real(mi1*ni_sbdm+i)
+      DO K = 1, NK3
+      DO J = mjm,mjp
+      DO I = mim,mip
+        glob_idx_j = real(mj1*nj_sbdm+j)
+        glob_idx_i = real(mi1*ni_sbdm+i)
       !   if (glob_idx_i==mi_glob/4 .and. glob_idx_j==mj_glob/2)
       !       th(i,j,k) = th(i,j,k)*1.5
       !   endif
 
-      !   ! radius_norm = sqrt( &
-      !   !                      ((glob_idx_i-mi_glob/2)*DX/4000.)**2 &
-      !   !                   !+  ((glob_idx_j-mj_glob/2)*DYNEW/5000.)**2 &
-      !   !                   + ((ZT(K)-3200.)/2000.)**2 &
-      !   !                   )
-      !   ! IF ( radius_norm <= 1 ) THEN
-      !   !   TH3D(I,J,K) = TH3D(I,J,K) &
-      !   !                 - 15.*(cos(3.14159265*0.5*radius_norm))
-      !   ! ENDIF
-      ! ENDDO
-      ! ENDDO
-      ! ENDDO
+        ! radius_norm = sqrt( &
+        !                      ((glob_idx_i-mi_glob/2)*DX/4000.)**2 &
+        !                   ! +  ((glob_idx_j-mj_glob/2)*DYNEW/5000.)**2 &
+        !                   + ((ZT(K)-3200.)/2000.)**2 &
+        !                   )
+        radius_norm = sqrt( &
+                             ((glob_idx_i-mi_glob/2)*DX/1000.)**2 &
+                          ! +  ((glob_idx_j-mj_glob/2)*DYNEW/5000.)**2 &
+                          + ((ZT(K)-3200.)/500.)**2 &
+                          )
+        IF ( radius_norm <= 1 ) THEN
+          TH3D(I,J,K) = TH3D(I,J,K) &
+                        - 15.*(cos(3.14159265*0.5*radius_norm))
+        ENDIF
+      ENDDO
+      ENDDO
+      ENDDO
 
   ENDSUBROUTINE USER_set_3D_perturbation
 

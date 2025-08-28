@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------- 
 
 set echo  # echoes the commands
-set expname = buoyancy
+set expname = bubble_wind
 
 # set paths
 set vvmdir = ` pwd | rev | cut -d/ -f 3- | rev `
@@ -60,6 +60,7 @@ endif
 cat > definesld.com << 'END1'
 #define MPI
 #define PERIODIC
+#define RELAX_XY
 'END1'
 cat definesld.com
 #define PHYSICS
