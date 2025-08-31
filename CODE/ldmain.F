@@ -208,8 +208,8 @@ PROGRAM ldmain
         
         
 
-        call  maintain_Time(  ( NXSAVG  * origin_dt ) - elapse_time , inner_dt )
-        ! inner_dt = origin_dt  ! if want to use original dt , not var version
+        ! call  maintain_Time(  ( NXSAVG  * origin_dt ) - elapse_time , inner_dt )
+        inner_dt = origin_dt  ! if want to use original dt , not var version
         DT = inner_dt
         itt_align = itt_align + inner_dt
         elapse_time = elapse_time + inner_dt

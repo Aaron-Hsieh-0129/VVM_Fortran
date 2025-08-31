@@ -80,12 +80,12 @@ CONTAINS
       FZXBU(I,J,K)=FZXBU(I,J,K)*GRAV/(2.*DYNEW)
       FZYBU(I,J,K)=FZYBU(I,J,K)*GRAV/(2.*DX)
   120 CONTINUE
-      do j = 1, MJ1
-      do i = 1, MI1
-        write(*, '(F10.5)', advance='no') FZYBU(i, j, 17)
-      end do
-      print *
-      end do
+      ! do j = 1, MJ1
+      ! do i = 1, MI1
+      !   write(*, '(F10.5)', advance='no') FZYBU(i, j, 17)
+      ! end do
+      ! print *
+      ! end do
       ! STOP 1
 
 

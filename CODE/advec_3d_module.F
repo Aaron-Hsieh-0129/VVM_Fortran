@@ -219,11 +219,13 @@ CONTAINS
       DO 547 J=1,MJ1
       DO 547 I=1,MI1
       ! Vertical periodic boundary condition
-      FLXI(I,J, 1)= FLXI(I,J,NK1)
-      FLXI(I,J,NK2)= FLXI(I,J,2)
-      ! FLXI(I,J, 1)= 0.
-      ! FLXI(I,J,NK2)= 0.
+      ! FLXI(I,J, 1)= FLXI(I,J,NK1)
+      ! FLXI(I,J,NK2)= FLXI(I,J,2)
+      FLXI(I,J, 1)= 0.
+      FLXI(I,J,NK2)= 0.
   547 CONTINUE
+
+      ! if (my_task == 0) print *, FLXI(:,:,2)
 
 
       DO 550 K=2,NK2

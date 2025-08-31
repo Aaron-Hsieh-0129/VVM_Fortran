@@ -58,8 +58,10 @@ CONTAINS
       tmp_y = 0._dbl_kind
       tmp_y(1:mi1,1:mj1,2:nk2-1) = - ytem
       idum1 = 0 
-      call multigrid_v(3,tmp_w,mi1,mj1,nk2,2,nk2-1,dx,dynew,dz,tmp_y,multilevel,norm,tol_3d,niterw,idum1,.True.)
-      if (my_task==0) write(*,'(A14,I8,A20,ES15.7)') "w iter = ", idum1,",norm of error=", norm
+      call multigrid_v(3,tmp_w,mi1,mj1,nk2,2,nk2-1,dx,dynew,dz,tmp_y, &
+      multilevel,norm,tol_3d,niterw,idum1,.True.)
+      if (my_task==0) write(*,'(A14,I8,A20,ES15.7)') "w iter = ", & 
+      idum1,",norm of error=", norm
     
       do k=1,nk2
         W3D(:,:,k)=tmp_w(:,:,k)/rhoz(k)
@@ -94,14 +96,18 @@ CONTAINS
       idum1 = 0 
       call xyavg1(psi,nhalo,mi1,mj1,dum1)
       psi = psi - dum1
-      call multigrid_v(2,tmp_psi,mi1,mj1,1,1,1,dx,dynew,dz,-psi,multilevel,norm,tol_2d,niterxy,idum1,.True.)
-      if (my_task==0) write(*,'(A14,I8,A20,ES15.7)') "psi iter = ", idum1," ,norm of error=", norm
+      call multigrid_v(2,tmp_psi,mi1,mj1,1,1,1,dx,dynew,dz,-psi,multilevel, &
+      norm,tol_2d,niterxy,idum1,.True.)
+      if (my_task==0) write(*,'(A14,I8,A20,ES15.7)') "psi iter = ", idum1," & 
+      ,norm of error=", norm
       psi = tmp_psi
       call xyavg1(chi,nhalo,mi1,mj1,dum1)
       idum1 = 0 
       chi = chi - dum1
-      call multigrid_v(2,tmp_chi,mi1,mj1,1,1,1,dx,dynew,dz,-chi,multilevel,norm,tol_2d,niterxy,idum1,.True.)
-      if (my_task==0) write(*,'(A14,I8,A20,ES15.7)') "chi iter = ", idum1,",norm of error=", norm
+      call multigrid_v(2,tmp_chi,mi1,mj1,1,1,1,dx,dynew,dz,-chi, &
+      multilevel,norm,tol_2d,niterxy,idum1,.True.)
+      if (my_task==0) write(*,'(A14,I8,A20,ES15.7)') "chi iter = ", idum1," &
+      ,norm of error=", norm
       chi = tmp_chi
       call timer_stop('MGsolver_2d')
 

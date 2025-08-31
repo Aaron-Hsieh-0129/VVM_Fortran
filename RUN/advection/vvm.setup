@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------- 
 
 set echo  # echoes the commands
-set expname = bubble_wind
+set expname = bubble_wind_test
 
 # set paths
 set vvmdir = ` pwd | rev | cut -d/ -f 3- | rev `
@@ -97,7 +97,7 @@ cat DOMAIN
 
 # input data
 cat > INPUT << 'END6'
- &INPUT1 NEWRUN=T, ITTADD=1200 /
+ &INPUT1 NEWRUN=T, ITTADD=300 /
  &INPUT2 RLAT=23.458, RLON=120.95 /
  &INPUT3 DX=100.,DYNEW=100.,DZ=500.,DZ1=100.,DT=1,NOTURB=F,NOSFX=F,NSFLUX=12,ALADV=1.,UVTAU=7200. /
 #           (m)          (m)     (m)     (m)    (s)                (time step)

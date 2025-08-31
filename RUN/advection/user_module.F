@@ -180,12 +180,13 @@ CONTAINS
         !                   )
         radius_norm = sqrt( &
                              ((glob_idx_i-mi_glob/2)*DX/1000.)**2 &
+                             ! ((glob_idx_j-mj_glob/2)*DYNEW/1000.)**2 &
                           ! +  ((glob_idx_j-mj_glob/2)*DYNEW/5000.)**2 &
                           + ((ZT(K)-3200.)/500.)**2 &
                           )
         IF ( radius_norm <= 1 ) THEN
           TH3D(I,J,K) = TH3D(I,J,K) &
-                        - 15.*(cos(3.14159265*0.5*radius_norm))
+                        + 5.*(cos(3.14159265*0.5*radius_norm))
         ENDIF
       ENDDO
       ENDDO

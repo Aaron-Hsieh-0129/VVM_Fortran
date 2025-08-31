@@ -561,7 +561,6 @@ CONTAINS
 !     MERIDIONAL ADVECTION
 !--------------------------
       DO 110 K= 2, NK1
-      if (k .eq. 17) print *, 'pre: ', VWND(1,1)
 
       DO 112 J = mjm,mjp
       DO 112 i = 1, MI1
@@ -582,7 +581,6 @@ CONTAINS
       DO 116 i = 1, Mi1
       FZY(I,J,K,L)=FZY(I,J,K,L)+FINALY(i,J)
   116 CONTINUE
-      if (k .eq. 17) print *, 'post: ', VWND(1,1)
   110 CONTINUE
 
 
