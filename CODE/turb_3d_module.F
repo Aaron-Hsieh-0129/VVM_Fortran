@@ -1582,6 +1582,10 @@ CONTAINS
 SUBROUTINE TURB_3D_INI
 #if defined (DIFFUSION)
       integer(KIND=int_kind ) :: i,j,k,nn
+      INTEGER :: p_count, num_procs_debug, mpi_err_debug
+      INTEGER :: i_d, j_d, k_d
+      LOGICAL :: file_exists
+      CHARACTER(LEN=32) :: out_filename
 
       ITT_LSM=-1
 
@@ -1748,6 +1752,62 @@ SUBROUTINE TURB_3D_INI
       call land_ini(hx,tg)
 #endif
 #endif
+
+
+
+      ! 設定輸出的檔案名稱
+      out_filename = "DHWW1_FULL_DUMP.txt"
+
+      ! 取得總 CPU 數量
+      CALL MPI_COMM_SIZE(MPI_COMM_WORLD, num_procs_debug, mpi_err_debug)
+
+      ! ----------------------------------------------------------------
+      ! 步驟 1: 由 Rank 0 負責初始化檔案 (建立新檔並寫入標頭)
+      ! ----------------------------------------------------------------
+      IF (my_rank .EQ. 0) THEN
+          OPEN(UNIT=200, FILE=TRIM(out_filename), STATUS='REPLACE', &
+               ACTION='WRITE', FORM='FORMATTED')
+          WRITE(200, *) "DHWW1 Full Output for Comparison"
+          WRITE(200, *) "Total Ranks: ", num_procs_debug
+          WRITE(200, *) "Format: Rank | K index | J index | Values(mim:mip)"
+          CLOSE(200)
+      ENDIF
+
+      ! ----------------------------------------------------------------
+      ! 步驟 2: 所有 CPU 排隊輪流寫入資料 (APPEND 模式)
+      ! ----------------------------------------------------------------
+      DO p_count = 0, num_procs_debug - 1
+          
+          ! MPI_BARRIER 確保大家同步，依序進入
+          CALL MPI_BARRIER(MPI_COMM_WORLD, mpi_err_debug)
+
+          IF (my_rank .EQ. p_count) THEN
+              ! 以 "APPEND" (追加) 模式開啟檔案
+              ! 注意：若編譯器較舊不支援 POSITION='APPEND'，請改用 ACCESS='APPEND'
+              OPEN(UNIT=200, FILE=TRIM(out_filename), STATUS='OLD', &
+                   POSITION='APPEND', ACTION='WRITE', FORM='FORMATTED')
+
+              WRITE(200, *) "--------------------------------------------------"
+              WRITE(200, '(A, I4, A, 4I5)') "RANK: ", my_rank, &
+                    " Indices(mim,mip,mjm,mjp): ", mim, mip, mjm, mjp
+
+              ! 這裡輸出所有層數 (K=1 到 NK3)，若只想看第10層可將迴圈改為 k_d=10,10
+              DO k_d = 1, NK3  
+                  WRITE(200, '(A, I3)') " Level K = ", k_d
+                  
+                  DO j_d = mjm, mjp
+                      ! 每一行輸出一條 Y 切片 (Row)
+                      WRITE(200, '(A, I4, A, 1000E14.6)') "  J=", j_d, ": ", &
+                            (DHWW1(i_d, j_d, k_d), i_d = mim, mip)
+                  END DO
+              END DO
+
+              CLOSE(200)
+          END IF
+      END DO
+
+      ! 最後再同步一次，確保所有人都寫完才離開
+      CALL MPI_BARRIER(MPI_COMM_WORLD, mpi_err_debug)
 
    END SUBROUTINE TURB_3D_INI
 

@@ -10,6 +10,7 @@ USE workcom
 USE bound
 USE utils
 USE domain_decomposition
+use mpi
 #if defined (LSM)
 USE land_module, only:land_interface,land_ini
 USE rad, only:lwDown_3D,swDown_3D,lwUp_3d, swUp_3d
@@ -27,6 +28,18 @@ REAL (KIND=dbl_kind), DIMENSION(mim:mip,mjm:mjp,NK3),PRIVATE :: &
 DHWU1,DHWV1,DHWW1,DHWU2,DHWV2,DHWW2
 
 INTEGER (KIND=int_kind), SAVE :: ITT_LSM
+
+integer :: my_rank, ierr
+integer :: k_level
+integer :: r, total_ranks
+integer :: wait_idx
+
+INTEGER :: p_src, k_target
+INTEGER :: local_nx, local_ny, recv_nx, recv_ny
+INTEGER :: status(MPI_STATUS_SIZE)
+INTEGER :: dims_buf(2) 
+REAL(KIND=dbl_kind), ALLOCATABLE :: TEMP_BUF(:,:)
+INTEGER :: n_procs_curr
 
 #endif
 
@@ -323,6 +336,11 @@ CONTAINS
       CALL BOUND_ARB (NK2,RKM)
       CALL BOUND_ARB (NK2,RKH)
 
+      RKM(:,:,:) = 100.
+      RKH(:,:,:) = 100.
+      RKQ(:,:,:) = 100.
+      RKZ(:,:,:) = 100.
+
       END IF
 
 !==================================================
@@ -525,6 +543,19 @@ CONTAINS
 ! Calculate diffusion component in the thermodynamic equation
 !=============================================================
 
+      DO K=1,NK2
+      DO J=1,MJ1
+      DO I=1,MI1
+        DIAG3D(i,j,k,1) = real(DHWU1(i,j,k))
+        DIAG3D(i,j,k,2) = real(DHWU2(i,j,k))
+        DIAG3D(i,j,k,3) = real(DHWV1(i,j,k))
+        DIAG3D(i,j,k,4) = real(DHWV2(i,j,k))
+        DIAG3D(i,j,k,5) = real(DHWW1(i,j,k))
+        DIAG3D(i,j,k,6) = real(DHWW2(i,j,k))
+      ENDDO
+      ENDDO
+      ENDDO
+
       DO 600 K=2,NK2
       DO 600 J=1,MJ1
       DO 600 I=1,MI1
@@ -556,6 +587,11 @@ CONTAINS
                    *(TH3D(I,J,K+1)-TH3D(I,J,K))*DHWW1(I,J,K)                  &
                    -FNZ(K-1)*RHOZ(K-1)*(RKQ(I,J,K)+RKQ(I,J,K-1)) &
                    *(TH3D(I,J,K)-TH3D(I,J,K-1))*DHWW2(I,J,K) )/(RHOU(K)*DZSQ)
+
+      ! DDX(I,J,K)=0.5*FNU(K)*(FNZ(K)*RHOZ(K)*(RKQ(I,J,K+1)+RKQ(I,J,K))     &
+      !              *(TH3D(I,J,K+1)-TH3D(I,J,K))*DHWW1(I,J,K)                  &
+      !              -FNZ(K-1)*RHOZ(K-1)*(RKQ(I,J,K)+RKQ(I,J,K-1)) &
+      !              *(TH3D(I,J,K)-TH3D(I,J,K-1))*DHWW2(I,J,K) )/(RHOU(K)*DZSQ)
      
       THSTD1(I,J,K)=(THSTD1(I,J,K)                               &
        +0.5*FNU(K)*(FNZ(K)*RHOZ(K)*(RKQ(I,J,K+1)+RKQ(I,J,K))     &
@@ -563,6 +599,8 @@ CONTAINS
                    -FNZ(K-1)*RHOZ(K-1)*(RKQ(I,J,K)+RKQ(I,J,K-1)) &
                    *(TH3D(I,J,K)-TH3D(I,J,K-1))*DHWW2(I,J,K) )/(RHOU(K)*DZSQ))
   620 CONTINUE
+
+      print *, "TH3D k=1", THBAR(1)
 
 
       DO 630 J=1,MJ1
@@ -575,6 +613,10 @@ CONTAINS
        -0.5*FNU(NK2)*(FNZ(NK1)*RHOZ(NK1)*(RKQ(I,J,NK2)+RKQ(I,J,NK1)) &
                    *(TH3D(I,J,NK2)-TH3D(I,J,NK1)))/(RHOU(NK2)*DZSQ)
      
+      
+      ! DDX(I,J,NK2)=-0.5*FNU(NK2)*(FNZ(NK1)*RHOZ(NK1)*(RKQ(I,J,NK2)+RKQ(I,J,NK1)) &
+      !              *(TH3D(I,J,NK2)-TH3D(I,J,NK1)))/(RHOU(NK2)*DZSQ)
+
       THSTD1(I,J,hxp)=THSTD1(I,J,hxp)                           &
         +FNU(hxp)*WTH(I,J)/(RHOU(hxp)*DZ)
      
@@ -590,6 +632,13 @@ CONTAINS
       THAD3(I,J,K)=DDX(I,J,K)
   650 CONTINUE
 
+      DO 660 K=1,NK2
+      DO 660 J=1,MJ1
+      DO 660 I=1,MI1
+#ifdef DIAG
+      diag3d(i,j,k,7) = ddx(i,j,k)
+#endif
+  660 CONTINUE
   
 !==============================================================
 ! Calculate diffusion component FOR THE TRACERS
@@ -1583,6 +1632,10 @@ CONTAINS
 SUBROUTINE TURB_3D_INI
 #if defined (DIFFUSION)
       integer(KIND=int_kind ) :: i,j,k,nn
+      INTEGER :: p_count_phy, nprocs_phy, err_phy
+      INTEGER :: i_p, j_p, k_p
+      CHARACTER(LEN=32) :: filename_phy
+      LOGICAL :: file_exists
 
       ITT_LSM=-1
 
@@ -1741,8 +1794,117 @@ SUBROUTINE TURB_3D_INI
       DO J=1,MJ1
       DO I=1,MI1
       DHWW1(I,J,1)=0.
-      DHWW2(I,J,1)=0.
       ENDDO
+      ENDDO
+
+      CALL BOUND_ARB(NK3, DHWW1)
+
+      ! write(*,*) "Rank: ", my_task
+
+
+
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHWW1(i_p, J, 13), i_p = 1, MI1)
+      ! ENDDO
+      
+      K = 15
+
+      ! print *, "UU1"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHUU1(i_p, J, K), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "UV1"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHUV1(i_p, J, K), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "UW1"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHUW1(i_p, J, K), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "UU2"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHUU2(i_p, J, K), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "UV2"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHUV2(i_p, J, K), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "UW2"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHUW2(i_p, J, K), i_p = 1, MI1)
+      ! ENDDO
+
+
+
+      ! print *, "WU1"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHWU1(i_p, J, 13), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "WV1"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHWV1(i_p, J, 13), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "WW1"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHWW1(i_p, J, K), i_p = 1, MI1)
+      ! ENDDO
+
+      ! print *, "WU2"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHWU2(i_p, J, K), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "WV2"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHWV2(i_p, J, 13), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "WW2"      
+      ! DO J=1,MJ1
+      ! WRITE(*, '(128E16.8)') (DHWW2(i_p, J, K), i_p = 1, MI1)
+      ! ENDDO
+
+      print *, "WU1"      
+      DO K=1,NK2
+      WRITE(*, '(128E16.8)') (DHWU1(i_p, 4, K), i_p = 1, MI1)
+      ENDDO
+
+      print *, "WU2"      
+      DO K=1,NK2
+      WRITE(*, '(128E16.8)') (DHWU2(i_p, 4, K), i_p = 1, MI1)
+      ENDDO
+
+      print *, "WV1"      
+      DO K=1,NK2
+      WRITE(*, '(128E16.8)') (DHWV1(i_p, 4, K), i_p = 1, MI1)
+      ENDDO
+
+      print *, "WV2"      
+      DO K=1,NK2
+      WRITE(*, '(128E16.8)') (DHWV2(i_p, 4, K), i_p = 1, MI1)
+      ENDDO
+      !
+      ! print *, "WW1"      
+      ! DO K=1,NK2
+      ! WRITE(*, '(128E16.8)') (DHWW1(i_p, 4, K), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "WW2"      
+      ! DO K=1,NK2
+      ! WRITE(*, '(128E16.8)') (DHWW2(i_p, 4, K), i_p = 1, MI1)
+      ! ENDDO
+
+
+      print *, "ITYPEW"      
+      DO K=1,NK2
+      WRITE(*, '(128I8)') (ITYPEW(i_p, 4, K), i_p = 1, MI1)
       ENDDO
 
 #if defined (LSM)

@@ -147,7 +147,7 @@ CONTAINS
   200 CONTINUE
 #endif
 
-      CALL damping_vort
+      ! CALL damping_vort
 
 #if defined (AREAMN)
 !-------------------

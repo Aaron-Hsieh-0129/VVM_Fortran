@@ -184,10 +184,10 @@ CONTAINS
                           ! +  ((glob_idx_j-mj_glob/2)*DYNEW/5000.)**2 &
                           + ((ZT(K)-3200.)/500.)**2 &
                           )
-        IF ( radius_norm <= 1 ) THEN
-          TH3D(I,J,K) = TH3D(I,J,K) &
-                        + 5.*(cos(3.14159265*0.5*radius_norm))
-        ENDIF
+        ! IF ( radius_norm <= 1 ) THEN
+        !   TH3D(I,J,K) = TH3D(I,J,K) &
+        !                 + 5.*(cos(3.14159265*0.5*radius_norm))
+        ! ENDIF
       ENDDO
       ENDDO
       ENDDO
@@ -228,8 +228,8 @@ CONTAINS
       integer(kind=int_kind), dimension(mi_glob,mj_glob,3), intent(out) :: ioutput_user
       real(kind=dbl_kind),    dimension(mi_glob,mj_glob,6), intent(out) :: routput_user
       logical, intent(out) :: taiwanvvm_flag
-      integer :: i
-      real(kind=dbl_kind) :: distance
+      integer :: i,j
+      real(kind=dbl_kind) :: distance, dist_x, dist_y
 
       taiwanvvm_flag = .False.
 
@@ -245,14 +245,27 @@ CONTAINS
       ioutput_user(:,:,3)=14   ! soil type
 
       ! add mountain (Chien and Wu, 2016)
-      do i=1,mi_glob
-        distance=abs(dble(i)-dble(mi_glob)/2.)*DX
-        if (distance<5000.) then
-          routput_user(i,:,1) = 1200.
-        else if (distance<=20000. .and. distance>=5000.) then
-          routput_user(i,:,1) = -0.08*(distance-20000.)
-        endif
-      enddo
+      ! do i=1,mi_glob
+      !   distance=abs(dble(i)-dble(mi_glob)/2.)*DX
+      !   if (distance<1000.) then
+      !     routput_user(i,:,1) = 3000.
+      !   endif
+      ! enddo
+    
+      ! do j = 1, mj1
+      !   do i = 1, mi1
+      !       dist_x = abs(dble(i) - dble(mi_glob)/2.) * DX
+      !       dist_y = abs(dble(j) - dble(mj_glob)/2.) * DX
+      !
+      !       if (dist_x < 1000. .and. dist_y < 1000.) then
+      !           routput_user(i, j, 1) = 3000.
+      !       else
+      !           routput_user(i, j, 1) = 0.
+      !       endif
+      !
+      !   enddo
+      ! enddo
+
 
   ENDSUBROUTINE USER_set_topography_and_land_type
 
@@ -611,7 +624,7 @@ CONTAINS
   160 CONTINUE
 
       
-      THBAR = 300.
+      ! THBAR = 300.
 
       IF (MY_TASK .EQ. 0 ) PRINT*,(PIBAR(K),PBAR(K),K,K=1,NK3)
 

@@ -587,6 +587,7 @@ CONTAINS
       DO 650 J=1,MJ1
       DO 650 I=1,MI1
       THAD3(I,J,K)=DDX(I,J,K)
+      ! diag3d(i,j,k,)
   650 CONTINUE
 
   
@@ -1746,6 +1747,10 @@ SUBROUTINE TURB_3D_INI
       DHWW2(I,J,1)=0.
       ENDDO
       ENDDO
+
+      #if defined(DIAG)
+            ! diag3d(i,j,k,1) = 
+      #endif
 
 #if defined (LSM)
       call land_ini(hx,tg)

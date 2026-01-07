@@ -410,11 +410,16 @@ CONTAINS
 
       if (my_task==0) write(*,*) "successfully read topo from TOPO.nc"
 
+      HX(:,:) = 0
+      HX(2:4,2:4) = 15
+
       tmp = maxval(HX)
       CALL MPI_ALLREDUCE(tmp,H,1,MPI_dbl_kind, MPI_MAX, MPI_COMM_WORLD, mpierr)
       maxtopo=INT(H) + 1
 
       call bound_arb(1,HX)
+
+
 
       DO I=1,MI1
       DO J=1,MJ1
@@ -458,6 +463,13 @@ CONTAINS
       IF(HX(I,J) .EQ. 0.) HX(I,J)=1.
       ENDDO
       ENDDO
+
+      print *, "ITYPEW: "
+      DO J=1,MJ1
+      WRITE(*, '(5I8)') (ITYPEW(I, J, 13), I = 1, MI1)
+      ENDDO
+
+
 
 #else
       hx=1

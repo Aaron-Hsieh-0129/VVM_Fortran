@@ -50,12 +50,12 @@ CONTAINS
 
       CALL XYAVG1(UTOP,nhalo,mi1,mj1,UTOPM)
 
-!      call bound_arb(1,UTOP)
+     call bound_arb(1,UTOP)
 
       DO 210 J=1,MJ1
       DO 210 I=1,MI1
-      ! U3DX(I,J,NK2) = UTMN + (UTOP(I,J) - UTOPM) 
-      U3DX(I,J,NK2) = (UTOP(I,J) - UTOPM) 
+      U3DX(I,J,NK2) = UTMN + (UTOP(I,J) - UTOPM) 
+      ! U3DX(I,J,NK2) = (UTOP(I,J) - UTOPM) 
   210 CONTINUE
 
       DO 212 K=NK1,1,-1

@@ -734,7 +734,7 @@ CONTAINS
       DO 1987 NT=1,ndiag_2d
       DO 1987 J=1,mj1
       DO 1987 I=1,mi1
-      STD_TMD2(I,J,NT)=STD_TMD2(I,J,NT) + DIAG2D(I,J,NT) * dtfac 
+      STD_TMD2(I,J,NT)=DIAG2D(I,J,NT) 
  1987 CONTINUE
       endif
 
@@ -743,7 +743,7 @@ CONTAINS
       DO 1988 K=1,nk2
       DO 1988 J=1,mj1
       DO 1988 I=1,mi1
-      STD_TMD3(I,J,K,NT)=STD_TMD3(I,J,K,NT) + DIAG3D(I,J,K,NT) * dtfac 
+      STD_TMD3(I,J,K,NT)=DIAG3D(I,J,K,NT)
  1988 CONTINUE
       endif
 #endif
@@ -919,8 +919,8 @@ CONTAINS
       std_tm55 = std_tm55 * fac
 #endif
 #if defined (DIAG)
-      if(ndiag_2d > 0) std_tmd2 = std_tmd2 * fac
-      if(ndiag_3d > 0) std_tmd3 = std_tmd3 * fac
+      if(ndiag_2d > 0) std_tmd2 = std_tmd2
+      if(ndiag_3d > 0) std_tmd3 = std_tmd3
 #endif
       out_tm9 = out_tm9 * fac
 #if defined (RAS)
@@ -944,7 +944,29 @@ CONTAINS
    END SELECT
 #endif
 
+#if defined (DIAG)
+      if (ndiag_2d>0) then
+      DO 1987 NT=1,ndiag_2d
+      DO 1987 J=1,mj1
+      DO 1987 I=1,mi1
+      STD_TMD2(I,J,NT)=DIAG2D(I,J,NT) 
+ 1987 CONTINUE
+      endif
 
+      if (ndiag_3d>0) then
+      DO 1988 NT=1,ndiag_3d
+      DO 1988 K=1,nk2
+      DO 1988 J=1,mj1
+      DO 1988 I=1,mi1
+      STD_TMD3(I,J,K,NT)=DIAG3D(I,J,K,NT)
+ 1988 CONTINUE
+      endif
+#endif
+
+#if defined (DIAG)
+      if(ndiag_2d > 0) std_tmd2 = std_tmd2
+      if(ndiag_3d > 0) std_tmd3 = std_tmd3
+#endif
 !------------------------------------------------------------------------------
 ! *** WRITE MODEL OUTPUT ***
 

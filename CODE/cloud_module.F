@@ -115,7 +115,7 @@ CONTAINS
 
 #endif
 
-      call damping_therm
+      ! call damping_therm
 
       CALL BOUND_3D
 
