@@ -1219,6 +1219,9 @@ CONTAINS
       DO 20 I = 1,MI1
       Z3DX(I,J, 1) = 0.
       Z3DX(I,J,NK2) = 0.
+! FIXME: Test
+      ! Z3DX(I,J, 1) = Z3DX(I,J,2)
+      ! Z3DX(I,J, NK2) = Z3DX(I,J,NK1)
    20 CONTINUE
 
       DO 30 K = 2,NK1
@@ -1233,6 +1236,9 @@ CONTAINS
       DO 40 I = 1,MI1
       Z3DY(I,J, 1) = 0.
       Z3DY(I,J,NK2) = 0.
+! FIXME: Test
+      ! Z3DY(I,J, 1) = Z3DY(I,J,2)
+      ! Z3DY(I,J, NK2) = Z3DY(I,J,NK1)
    40 CONTINUE
 
    END SUBROUTINE ABM_3D

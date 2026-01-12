@@ -221,6 +221,15 @@ CONTAINS
               +FNZ(K)*(FNU(K+1)/RHOU(K+1)+FNU(K)/RHOU(K))/DZSQ
       CGAU(K)=-FNZ(K)*FNU(K+1)/(DZSQ*RHOU(K+1))
 
+      ! if (my_task .eq. 1) print *, "k = ", k, ", AGAU = ",  AGAU(K), &
+      ! ", rho = ", rhou(K)
+#ifdef DIAG
+
+      diag3d(1,1,k,11) = AGAU(k)
+      diag3d(2,1,k,11) = BGAU(k)
+      diag3d(3,1,k,11) = CGAU(k)
+#endif
+
    10 CONTINUE
 
 

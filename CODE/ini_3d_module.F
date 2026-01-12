@@ -272,6 +272,14 @@ CONTAINS
                 -(U3DY(I,J,K+1)-U3DY(I,J,K))*FNZ(K)/DZ
  660 CONTINUE
 
+! FIXME: Test
+!     DO 670 K = 1, NK2
+!     DO 670 J = mjm, mjp
+!     DO 670 I = mim, mip
+!     Z3DY(I,J,K)=TH3D(I,J,K)
+!     Z3DX(I,J,K)=TH3D(I,J,K)
+!     Z3DZ(I,J,K)=TH3D(I,J,K)
+! 670 CONTINUE
 
       restart_read: IF (.false.)THEN
 

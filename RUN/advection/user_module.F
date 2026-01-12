@@ -639,16 +639,16 @@ CONTAINS
       DO 180 K = 2, NK2
       ALPHAW = ( ALPHA(K) + ALPHA(K+1) ) / 2.
       RHOz(K) = 1. / ALPHAW
-      RHOz(K) = 1.
+      ! RHOz(K) = 1.
   180 CONTINUE
 
 !     SURFACE DENSITY
 
       RHOz(1) = PSFC / ( RGAS * TV(1) )
-      RHOz(1) = 1.
+      ! RHOz(1) = 1.
       DO 190 K = 2, NK3
       RHO(K) = 1. / ALPHA(K)
-      RHO(K) = 1.
+      ! RHO(K) = 1.
   190 CONTINUE
 
 

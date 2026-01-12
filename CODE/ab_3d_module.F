@@ -105,9 +105,9 @@ CONTAINS
 !!----------------------------------------------------------------------
 !!      endif
 
-      ! call timer_start('rcalc_3d')
-      ! IF (.NOT.NOTHERM) CALL RCALC_3D ( N1, N2, ITT )
-      ! call timer_stop('rcalc_3d')
+      call timer_start('rcalc_3d')
+      IF (.NOT.NOTHERM) CALL RCALC_3D ( N1, N2, ITT )
+      call timer_stop('rcalc_3d')
 
 ! Determine turbulence coefficients RKM and RKH
       call timer_start('TURB_3D')
@@ -139,35 +139,35 @@ CONTAINS
       CALL CLOUD_3D_COREC
       call timer_stop('CLOUD_3D_COREC')
 
-! Nudging moved to RCALC_3D
-! Nudge mean water vapor and mean potential temperature to mean
-! observed profiles (TWP-ICE only)
-!      CALL NUDGE
+! ! Nudging moved to RCALC_3D
+! ! Nudge mean water vapor and mean potential temperature to mean
+! ! observed profiles (TWP-ICE only)
+! !      CALL NUDGE
+! !
 !
-
-! Fill negative values
-      ! call timer_start('Q_CHK_3D')
-      ! CALL Q_CHK_3D ( ITT )
-      ! call timer_stop('Q_CHK_3D')
-
+! ! Fill negative values
+!       ! call timer_start('Q_CHK_3D')
+!       ! CALL Q_CHK_3D ( ITT )
+!       ! call timer_stop('Q_CHK_3D')
+!
       ENDIF  
-      ! call timer_start('BUOYF_3D')
-      ! CALL BUOYF_3D (BUOY)
-      ! call timer_stop('BUOYF_3D')
-      ! call timer_start('VORT_3D')
-      ! CALL VORT_3D  ( N1, N2 )
-      ! call timer_stop('VORT_3D')
-! #if !defined (TURB_TOM)
-!       call timer_start('TURB_3D_VORT')
-!       CALL TURB_3D_VORT
-!       call timer_stop('TURB_3D_VORT')
-! #endif
-!       call timer_start('VORT_3D_COREC')
-!       CALL VORT_3D_COREC
-!       call timer_stop('VORT_3D_COREC')
-      ! call timer_start('WIND_3D')
-      ! CALL WIND_3D  ( N1, N2 )
-      ! call timer_stop('WIND_3D')
+      call timer_start('BUOYF_3D')
+      CALL BUOYF_3D (BUOY)
+      call timer_stop('BUOYF_3D')
+      call timer_start('VORT_3D')
+      CALL VORT_3D  ( N1, N2 )
+      call timer_stop('VORT_3D')
+#if !defined (TURB_TOM)
+      call timer_start('TURB_3D_VORT')
+      CALL TURB_3D_VORT
+      call timer_stop('TURB_3D_VORT')
+#endif
+      call timer_start('VORT_3D_COREC')
+      CALL VORT_3D_COREC
+      call timer_stop('VORT_3D_COREC')
+      call timer_start('WIND_3D')
+      CALL WIND_3D  ( N1, N2 )
+      call timer_stop('WIND_3D')
       ! call timer_start('UPDATE_TRACER')
       ! if (ntracer > 0) CALL UPDATE_TRACER ( ITT )
       ! call timer_stop('UPDATE_TRACER')

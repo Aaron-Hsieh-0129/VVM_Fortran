@@ -51,6 +51,18 @@ CONTAINS
       TEMPI(I,J,K)=U3DX(I,J,K)*RHOU(K)
   320 CONTINUE
 
+
+      DO K=1,NK2
+      DO J=1,MJ1
+      DO I=1,MI1
+         diag3d(i,j,k,24) = TEMPI(i,j,k)
+
+      ENDDO
+      ENDDO
+      ENDDO
+
+
+
       DO 330 K=2,NK2
       DO 330 J=1,MJ1
       UEW(1,J,K) = 0.5*(UEW(1,J,K)+ABS(UEW(1,J,K)))

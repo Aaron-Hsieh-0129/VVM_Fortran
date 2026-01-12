@@ -552,6 +552,23 @@ CONTAINS
         DIAG3D(i,j,k,4) = real(DHWV2(i,j,k))
         DIAG3D(i,j,k,5) = real(DHWW1(i,j,k))
         DIAG3D(i,j,k,6) = real(DHWW2(i,j,k))
+        DIAG3D(i,j,k,8) = real(ITYPEU(i,j,k))
+        DIAG3D(i,j,k,9) = real(ITYPEV(i,j,k))
+        DIAG3D(i,j,k,10) = real(ITYPEW(i,j,k))
+        DIAG3D(1,2,k,11) = RHOU(k)
+        DIAG3D(2,2,k,11) = RHOZ(k)
+        DIAG3D(i,j,k,12) = real(DHVU1(i,j,k))
+        DIAG3D(i,j,k,13) = real(DHVU2(i,j,k))
+        DIAG3D(i,j,k,14) = real(DHVV1(i,j,k))
+        DIAG3D(i,j,k,15) = real(DHVV2(i,j,k))
+        DIAG3D(i,j,k,16) = real(DHVW1(i,j,k))
+        DIAG3D(i,j,k,17) = real(DHVW2(i,j,k))
+        DIAG3D(i,j,k,18) = real(DHUU1(i,j,k))
+        DIAG3D(i,j,k,19) = real(DHUU2(i,j,k))
+        DIAG3D(i,j,k,20) = real(DHUV1(i,j,k))
+        DIAG3D(i,j,k,21) = real(DHUV2(i,j,k))
+        DIAG3D(i,j,k,22) = real(DHUW1(i,j,k))
+        DIAG3D(i,j,k,23) = real(DHUW2(i,j,k))
       ENDDO
       ENDDO
       ENDDO
@@ -600,14 +617,14 @@ CONTAINS
                    *(TH3D(I,J,K)-TH3D(I,J,K-1))*DHWW2(I,J,K) )/(RHOU(K)*DZSQ))
   620 CONTINUE
 
-      print *, "TH3D k=1", THBAR(1)
+      ! print *, "TH3D k=1", THBAR(1)
 
 
       DO 630 J=1,MJ1
       DO 630 I=1,MI1
-      hxp=INT(hx(I,J))+1
-      DDX(I,J,hxp)=DDX(I,J,hxp)                                     &
-       +FNU(hxp)*WTH(I,J)/(RHOU(hxp)*DZ)
+      ! hxp=INT(hx(I,J))+1
+      ! DDX(I,J,hxp)=DDX(I,J,hxp)                                     &
+      !  +FNU(hxp)*WTH(I,J)/(RHOU(hxp)*DZ)
      
       DDX(I,J,NK2)=DDX(I,J,NK2)                                      &
        -0.5*FNU(NK2)*(FNZ(NK1)*RHOZ(NK1)*(RKQ(I,J,NK2)+RKQ(I,J,NK1)) &
@@ -617,9 +634,9 @@ CONTAINS
       ! DDX(I,J,NK2)=-0.5*FNU(NK2)*(FNZ(NK1)*RHOZ(NK1)*(RKQ(I,J,NK2)+RKQ(I,J,NK1)) &
       !              *(TH3D(I,J,NK2)-TH3D(I,J,NK1)))/(RHOU(NK2)*DZSQ)
 
-      THSTD1(I,J,hxp)=THSTD1(I,J,hxp)                           &
-        +FNU(hxp)*WTH(I,J)/(RHOU(hxp)*DZ)
-     
+     !  THSTD1(I,J,hxp)=THSTD1(I,J,hxp)                           &
+     !    +FNU(hxp)*WTH(I,J)/(RHOU(hxp)*DZ)
+     ! 
       THSTD1(I,J,NK2)=THSTD1(I,J,NK2)                                 &
         -0.5*FNU(NK2)*(FNZ(NK1)*RHOZ(NK1)*(RKQ(I,J,NK2)+RKQ(I,J,NK1)) &
                    *(TH3D(I,J,NK2)-TH3D(I,J,NK1)))/(RHOU(NK2)*DZSQ)
@@ -808,15 +825,15 @@ CONTAINS
       DO 730 J=1,MJ1
       DO 730 I=1,MI1
       hxp=INT(hx(I,J))+1
-      DDX(I,J,hxp)=DDX(I,J,hxp)                                   &
-       +FNU(hxp)*WQV(I,J)/(RHOU(hxp)*DZ)
+      ! DDX(I,J,hxp)=DDX(I,J,hxp)                                   &
+      !  +FNU(hxp)*WQV(I,J)/(RHOU(hxp)*DZ)
      
       DDX(I,J,NK2)=DDX(I,J,NK2)                                      &
        -0.5*FNU(NK2)*(FNZ(NK1)*RHOZ(NK1)*(RKQ(I,J,NK2)+RKQ(I,J,NK1)) &
                    *(QV3D(I,J,NK2)-QV3D(I,J,NK1)))/(RHOU(NK2)*DZSQ)
      
-      QVSTD(I,J,hxp)=QVSTD(I,J,hxp)                                &
-        +FNU(hxp)*WQV(I,J)/(RHOU(hxp)*DZ)
+      ! QVSTD(I,J,hxp)=QVSTD(I,J,hxp)                                &
+      !   +FNU(hxp)*WQV(I,J)/(RHOU(hxp)*DZ)
 
       QVSTD(I,J,NK2)=QVSTD(I,J,NK2)                                   &
         -0.5*FNU(NK2)*(FNZ(NK1)*RHOZ(NK1)*(RKQ(I,J,NK2)+RKQ(I,J,NK1)) &
@@ -1871,25 +1888,25 @@ SUBROUTINE TURB_3D_INI
       ! WRITE(*, '(128E16.8)') (DHWW2(i_p, J, K), i_p = 1, MI1)
       ! ENDDO
 
-      print *, "WU1"      
-      DO K=1,NK2
-      WRITE(*, '(128E16.8)') (DHWU1(i_p, 4, K), i_p = 1, MI1)
-      ENDDO
-
-      print *, "WU2"      
-      DO K=1,NK2
-      WRITE(*, '(128E16.8)') (DHWU2(i_p, 4, K), i_p = 1, MI1)
-      ENDDO
-
-      print *, "WV1"      
-      DO K=1,NK2
-      WRITE(*, '(128E16.8)') (DHWV1(i_p, 4, K), i_p = 1, MI1)
-      ENDDO
-
-      print *, "WV2"      
-      DO K=1,NK2
-      WRITE(*, '(128E16.8)') (DHWV2(i_p, 4, K), i_p = 1, MI1)
-      ENDDO
+      ! print *, "WU1"      
+      ! DO K=1,NK2
+      ! WRITE(*, '(128E16.8)') (DHWU1(i_p, 4, K), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "WU2"      
+      ! DO K=1,NK2
+      ! WRITE(*, '(128E16.8)') (DHWU2(i_p, 4, K), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "WV1"      
+      ! DO K=1,NK2
+      ! WRITE(*, '(128E16.8)') (DHWV1(i_p, 4, K), i_p = 1, MI1)
+      ! ENDDO
+      !
+      ! print *, "WV2"      
+      ! DO K=1,NK2
+      ! WRITE(*, '(128E16.8)') (DHWV2(i_p, 4, K), i_p = 1, MI1)
+      ! ENDDO
       !
       ! print *, "WW1"      
       ! DO K=1,NK2
@@ -1902,10 +1919,10 @@ SUBROUTINE TURB_3D_INI
       ! ENDDO
 
 
-      print *, "ITYPEW"      
-      DO K=1,NK2
-      WRITE(*, '(128I8)') (ITYPEW(i_p, 4, K), i_p = 1, MI1)
-      ENDDO
+      ! print *, "ITYPEW"      
+      ! DO K=1,NK2
+      ! WRITE(*, '(128I8)') (ITYPEW(i_p, 4, K), i_p = 1, MI1)
+      ! ENDDO
 
 #if defined (LSM)
       call land_ini(hx,tg)
