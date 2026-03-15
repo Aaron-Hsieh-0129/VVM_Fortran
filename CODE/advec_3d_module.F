@@ -160,13 +160,13 @@ CONTAINS
   450 CONTINUE
 
 !     Vertical advection
-      DO K=1,NK2
-      DO J=1,MJ1
-      DO I=1,MI1
-          W3D(I,J,K) = 5.
-      ENDDO
-      ENDDO
-      ENDDO
+      ! DO K=1,NK2
+      ! DO J=1,MJ1
+      ! DO I=1,MI1
+      !     W3D(I,J,K) = 5.
+      ! ENDDO
+      ! ENDDO
+      ! ENDDO
 
       DO 520 K=2,NK1
       DO 520 J=1,MJ1

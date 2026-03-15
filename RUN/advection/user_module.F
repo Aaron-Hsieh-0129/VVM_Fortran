@@ -24,6 +24,7 @@ PUBLIC :: &
   USER_set_CHEM_reaction_file
 
 CONTAINS
+
   SUBROUTINE USER_set_mean_profile_and_SST
       IMPLICIT NONE
       !! --------------------
@@ -39,34 +40,67 @@ CONTAINS
       !! UG(NK3)    [m/s],   VG(NK3)    [m/s]
       !! --------------------
 
-      INTEGER(KIND=int_kind), PARAMETER :: nt1=2
-      REAL(KIND=dbl_kind),    DIMENSION(nt1) :: P1(nt1), T1(nt1), QV1(nt1)
-      INTEGER(KIND=int_kind) :: k
+      INTEGER (KIND=int_kind), PARAMETER :: NTMAX=10000
+      INTEGER (KIND=int_kind) :: NT1
+      REAL (KIND=dbl_kind) :: P1(NTMAX), T1(NTMAX), QV1(NTMAX)
+      REAL (KIND=dbl_kind) :: U1(NTMAX), V1(NTMAX)
+      CHARACTER(len=300)   :: fname
+      INTEGER              :: k, ios
+      
 
-      ! stable enviroment
-      DATA P1/1000., 100./
-      DATA T1/300.,  200./
-      DATA QV1/2*1.e-15/
+      fname = './user_files/profile_dry.txt'
 
-      SST=300.
-      P1 = P1*100.
-      CALL USER_interpolate_thermoal_profile(NT1, P1, T1, QV1)
+      ! get data length
+      NT1 = 0
+      k   = 1
+      OPEN(unit=88, file=TRIM(fname), status='old', action='read')
+      READ(88, *) ! skip header
+      DO
+        READ(88, *, iostat=ios) P1(k), T1(k), QV1(k), U1(k), V1(k)
+        if (ios /= 0) exit
+        NT1 = NT1 + 1
+        k   = k + 1
+        if (k>NTMAX) then 
+          stop '!! ERROR !! please increase the NTMAX &
+                when read sounding profile in user_module.f'
+        endif
+      ENDDO
+      close(88)
+      if (my_task.eq.1) WRITE(*,*) "NT1 = ", NT1
 
-      !! ! stable environment
-      !! do k=2,nk2
-      !!   THBAR(k)=300.+0.0015*zt(k)
-      !! enddo
-      !! thbar(1)=thbar(2)
-      !! thbar(nk3)=thbar(nk2)
-      !! QVBAR=1e-15
 
-      Q1LS=0.
-      Q2LS=0.
-      WLS=0.
+      !P1(:)  = P1*100.
+      !QV1(:) = QV1*1e-3
 
-      UG=0.
-      VG=0.
+      ! interpolate thermoaldynamics profile
+      ! SET PBAR(NK3)  [Pa],     PIBAR(NK3)
+      ! SET THBAR(NK3) [K],      QVBAR(NK3)[kg/kg]
+      ! SET RHO(NK3)   [kg/m3],  RHOZ(NK3) [kg/m3]
 
+      CALL USER_interpolate_thermoal_profile( &
+           NT1, P1(1:NT1), T1(1:NT1), QV1(1:NT1) &
+           )
+
+      ! interpolate dynamics profile
+      ! SET UG(NK3)[m/s], VG(NK3)[m/s]
+
+      CALL USER_interpolate_wind_profile( &
+           NT1, P1(1:NT1), U1(1:NT1), V1(1:NT1) &
+           )
+
+
+      ! interpolate large-scale profile
+      !!  ! SET Q1LS(NK3)[K/s], Q2LS(NK3)[g/g/s], WLS(NK3) [m/s]
+
+      !!  CALL USER_interpolate_largescale_profile( &
+      !!       NQ1, PQ1(1:NT1), Q1OBS(1:NT1), Q2OBS(1:NT1), WLS1(1:NT1) &
+      !!       )
+
+      WLS(:)    = 0.
+      Q1LS(:)   = 0.
+      Q2LS(:)   = 0.
+      SST       = 300.
+  
   ENDSUBROUTINE USER_set_mean_profile_and_SST
 
 
@@ -109,21 +143,19 @@ CONTAINS
       REAL(dbl_kind)    :: glob_idx_i, glob_idx_j
       REAL(dbl_kind)    :: radius_norm
    
-      do i = 1, mi1
-      do j = 1, mj1
-      do k = 1, nk2
-          th3d(i,j,k) = 300.
-      enddo
-      enddo
-      enddo
+      ! th3d(:,:,:) = 300.
+      u3dx(:,:,:) = 10.
 
       !! bubble example
       i = int(mi1/2)
       j = int(mj1/2)
-      k = int(nk2/2)
+      k = int(nk2/2)+1
       do i = int(mi1/4), int(mi1*3/4)
       do j = int(mj1/4), int(mj1*3/4)
           th3d(i,j,k) = th3d(i,j,k) + 50.
+          z3dx(i,j,k) = z3dx(i,j,k) + 50.
+          z3dy(i,j,k) = z3dy(i,j,k) + 50.
+          z3dz(i,j,nk2) = z3dz(i,j,nk2) + 50.
       enddo
       enddo
 
@@ -584,7 +616,7 @@ CONTAINS
       DO 180 K = 2, NK2
       ALPHAW = ( ALPHA(K) + ALPHA(K+1) ) / 2.
       RHOz(K) = 1. / ALPHAW
-      RHOz(K) = 1.
+      ! RHOz(K) = 1.
   180 CONTINUE
 
 !     SURFACE DENSITY
@@ -593,7 +625,7 @@ CONTAINS
       RHOz(1) = 1.
       DO 190 K = 2, NK3
       RHO(K) = 1. / ALPHA(K)
-      RHO(K) = 1.
+      ! RHO(K) = 1.
   190 CONTINUE
 
 
