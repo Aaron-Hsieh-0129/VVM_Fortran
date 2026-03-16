@@ -144,7 +144,8 @@ CONTAINS
       REAL(dbl_kind)    :: radius_norm
    
       ! th3d(:,:,:) = 300.
-      u3dx(:,:,:) = 10.
+      ! u3dx(:,:,:) = 10.
+      u3dy(:,:,:) = 10.
 
       !! bubble example
       i = int(mi1/2)
