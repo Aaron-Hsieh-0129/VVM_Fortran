@@ -143,9 +143,10 @@ CONTAINS
       REAL(dbl_kind)    :: glob_idx_i, glob_idx_j
       REAL(dbl_kind)    :: radius_norm
    
-      ! th3d(:,:,:) = 300.
+      th3d(:,:,:) = 300.
       ! u3dx(:,:,:) = 10.
-      u3dy(:,:,:) = 10.
+      ! u3dy(:,:,:) = 10.
+      w3d(:,:,:) = 10.
 
       !! bubble example
       i = int(mi1/2)
@@ -617,7 +618,7 @@ CONTAINS
       DO 180 K = 2, NK2
       ALPHAW = ( ALPHA(K) + ALPHA(K+1) ) / 2.
       RHOz(K) = 1. / ALPHAW
-      ! RHOz(K) = 1.
+      RHOz(K) = 1.
   180 CONTINUE
 
 !     SURFACE DENSITY
@@ -626,7 +627,7 @@ CONTAINS
       RHOz(1) = 1.
       DO 190 K = 2, NK3
       RHO(K) = 1. / ALPHA(K)
-      ! RHO(K) = 1.
+      RHO(K) = 1.
   190 CONTINUE
 
 
