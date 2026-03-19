@@ -15,7 +15,7 @@
 # Example: make INTEL=true DEBUG=true
 
 set echo  # echoes the commands
-set expname = advection_w
+set expname = stretching
 
 # set job system and compiler
 set compiler = 'intel_mogamd'

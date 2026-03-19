@@ -405,8 +405,10 @@ CONTAINS
       DO 500 K = 2,NK1
       DO 500 J = 1,MJ1
       DO 500 I = 1,MI1
-      FZX(I,J,K,L)=FZX(I,J,K,L)                       &
-                  +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
+      ! FZX(I,J,K,L)=FZX(I,J,K,L)                       &
+      !             +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
+      ! Stretching
+      FZX(I,J,K,L)=TERM1(I,J,K)
   500 CONTINUE
 
 
@@ -641,8 +643,10 @@ CONTAINS
       DO 500 K = 2,NK1
       DO 500 J = 1,MJ1
       DO 500 I = 1,MI1
-      FZY(I,J,K,L)=FZY(I,J,K,L)                            &
-                  +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
+      ! FZY(I,J,K,L)=FZY(I,J,K,L)                            &
+      !             +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
+      ! Stretching
+      FZY(I,J,K,L)=TERM1(I,J,K)
   500 CONTINUE
 
 #if defined (CORIOLIS)
@@ -921,8 +925,10 @@ CONTAINS
 
       DO 960 J=1,MJ1
       DO 960 I=1,MI1
-      FZTOP(I,J,L)=FZTOP(I,J,L)         &
-                  +TERM1(I,J,1)+TERM2(I,J,1)+TERM3(I,J,1)
+      ! FZTOP(I,J,L)=FZTOP(I,J,L)         &
+      !             +TERM1(I,J,1)+TERM2(I,J,1)+TERM3(I,J,1)
+      ! Stretching
+      FZTOP(I,J,L)=TERM1(I,J,1)
   960 CONTINUE
 
 #if defined (CORIOLIS)

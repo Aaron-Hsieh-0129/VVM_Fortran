@@ -146,7 +146,7 @@ CONTAINS
       th3d(:,:,:) = 300.
       ! u3dx(:,:,:) = 10.
       ! u3dy(:,:,:) = 10.
-      w3d(:,:,:) = 10.
+      ! w3d(:,:,:) = 10.
 
       !! bubble example
       i = int(mi1/2)
@@ -160,6 +160,19 @@ CONTAINS
           z3dz(i,j,nk2) = z3dz(i,j,nk2) + 50.
       enddo
       enddo
+
+
+      DO K = 1, NK3
+      DO J = mjm,mjp
+      DO I = mim,mip
+        glob_idx_j = real(mj1*nj_sbdm+j)
+        glob_idx_i = real(mi1*ni_sbdm+i)
+        U3DX(i,j,k) = 32./2. - glob_idx_i - 2.
+        U3DY(i,j,k) = 32./2. - glob_idx_j - 2.
+        W3D(i,j,k) = -(32./2. - K - 1.)
+      ENDDO
+      ENDDO
+      ENDDO
 
 
       ! DO K = 1, NK3
@@ -618,16 +631,16 @@ CONTAINS
       DO 180 K = 2, NK2
       ALPHAW = ( ALPHA(K) + ALPHA(K+1) ) / 2.
       RHOz(K) = 1. / ALPHAW
-      RHOz(K) = 1.
+      ! RHOz(K) = 1.
   180 CONTINUE
 
 !     SURFACE DENSITY
 
       RHOz(1) = PSFC / ( RGAS * TV(1) )
-      RHOz(1) = 1.
+      ! RHOz(1) = 1.
       DO 190 K = 2, NK3
       RHO(K) = 1. / ALPHA(K)
-      RHO(K) = 1.
+      ! RHO(K) = 1.
   190 CONTINUE
 
 
