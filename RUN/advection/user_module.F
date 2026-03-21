@@ -158,18 +158,36 @@ CONTAINS
           z3dx(i,j,k) = z3dx(i,j,k) + 50.
           z3dy(i,j,k) = z3dy(i,j,k) + 50.
           z3dz(i,j,nk2) = z3dz(i,j,nk2) + 50.
+
+          z3dx(i,j,nk2) = z3dx(i,j,nk2) + 50.
+          z3dy(i,j,nk2) = z3dy(i,j,nk2) + 50.
       enddo
       enddo
 
 
+      ! Stretching
+      ! DO K = 1, NK3
+      ! DO J = mjm,mjp
+      ! DO I = mim,mip
+      !   glob_idx_j = real(mj1*nj_sbdm+j)
+      !   glob_idx_i = real(mi1*ni_sbdm+i)
+      !   U3DX(i,j,k) = 32./2. - glob_idx_i - 2.
+      !   U3DY(i,j,k) = 32./2. - glob_idx_j - 2.
+      !   W3D(i,j,k) = -(32./2. - K - 1.)
+      ! ENDDO
+      ! ENDDO
+      ! ENDDO
+
+      ! Twisting
       DO K = 1, NK3
       DO J = mjm,mjp
       DO I = mim,mip
         glob_idx_j = real(mj1*nj_sbdm+j)
         glob_idx_i = real(mi1*ni_sbdm+i)
-        U3DX(i,j,k) = 32./2. - glob_idx_i - 2.
-        U3DY(i,j,k) = 32./2. - glob_idx_j - 2.
-        W3D(i,j,k) = -(32./2. - K - 1.)
+
+        U3DX(i,j,k) = -0.2*(32./2. - glob_idx_j - 2.)
+        U3DY(i,j,k) = -0.2*(32./2. - glob_idx_i - 2.)
+        W3D(i,j,k) = 0.2*(32./2.-glob_idx_i-2.)
       ENDDO
       ENDDO
       ENDDO

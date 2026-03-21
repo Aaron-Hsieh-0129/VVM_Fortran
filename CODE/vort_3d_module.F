@@ -102,20 +102,20 @@ CONTAINS
       Z3DZ(I,J,NK2)=Z3DZ(I,J,NK2)+A*FZTOP(I,J,N2)+B*FZTOP(I,J,N1)
   100 CONTINUE
 
-      DO 110 K=NK1,1,-1
-      DO 110 J=1,MJ1
-      DO 110 I=1,MI1
-      Z3DZ(I,J,K)=Z3DZ(I,J,K+1)                       &
-       +(Z3DX(I+1,J,K)-Z3DX(I,J,K))*DZ/(DX*FNZ(K))    &
-       -(Z3DY(I,J+1,K)-Z3DY(I,J,K))*DZ/(DYNEW*FNZ(K))
-  110 CONTINUE
-
-      DO 150 J=1,MJ1
-      DO 150 I=1,MI1
-      Z3DZ(I,J,NK3)=Z3DZ(I,J,NK2)                         &
-       -(Z3DX(I+1,J,NK2)-Z3DX(I,J,NK2))*DZ/(DX*FNZ(NK2))  &
-       +(Z3DY(I,J+1,NK2)-Z3DY(I,J,NK2))*DZ/(DYNEW*FNZ(NK2))
-  150 CONTINUE
+  !     DO 110 K=NK1,1,-1
+  !     DO 110 J=1,MJ1
+  !     DO 110 I=1,MI1
+  !     Z3DZ(I,J,K)=Z3DZ(I,J,K+1)                       &
+  !      +(Z3DX(I+1,J,K)-Z3DX(I,J,K))*DZ/(DX*FNZ(K))    &
+  !      -(Z3DY(I,J+1,K)-Z3DY(I,J,K))*DZ/(DYNEW*FNZ(K))
+  ! 110 CONTINUE
+  !
+  !     DO 150 J=1,MJ1
+  !     DO 150 I=1,MI1
+  !     Z3DZ(I,J,NK3)=Z3DZ(I,J,NK2)                         &
+  !      -(Z3DX(I+1,J,NK2)-Z3DX(I,J,NK2))*DZ/(DX*FNZ(NK2))  &
+  !      +(Z3DY(I,J+1,NK2)-Z3DY(I,J,NK2))*DZ/(DYNEW*FNZ(NK2))
+  ! 150 CONTINUE
 
       CALL BOUND_3D_Z
 
@@ -408,7 +408,9 @@ CONTAINS
       ! FZX(I,J,K,L)=FZX(I,J,K,L)                       &
       !             +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
       ! Stretching
-      FZX(I,J,K,L)=TERM1(I,J,K)
+      ! FZX(I,J,K,L)=TERM1(I,J,K)
+      ! Twisting
+      FZX(I,J,K,L)=TERM2(I,J,K)+TERM3(I,J,K)
   500 CONTINUE
 
 
@@ -646,7 +648,9 @@ CONTAINS
       ! FZY(I,J,K,L)=FZY(I,J,K,L)                            &
       !             +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
       ! Stretching
-      FZY(I,J,K,L)=TERM1(I,J,K)
+      ! FZY(I,J,K,L)=TERM1(I,J,K)
+      ! Twisting
+      FZY(I,J,K,L)=TERM2(I,J,K)+TERM3(I,J,K)
   500 CONTINUE
 
 #if defined (CORIOLIS)
@@ -928,7 +932,9 @@ CONTAINS
       ! FZTOP(I,J,L)=FZTOP(I,J,L)         &
       !             +TERM1(I,J,1)+TERM2(I,J,1)+TERM3(I,J,1)
       ! Stretching
-      FZTOP(I,J,L)=TERM1(I,J,1)
+      ! FZTOP(I,J,L)=TERM1(I,J,1)
+      ! Twisting
+      FZTOP(I,J,L)=TERM2(I,J,1)+TERM3(I,J,1)
   960 CONTINUE
 
 #if defined (CORIOLIS)
