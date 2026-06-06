@@ -121,51 +121,51 @@ CONTAINS
       locean = .true.
       psfx = .false.
 
-      ! if(my_task == 0) then
-      ! INQUIRE(iolength=k) temp
-      ! OPEN(UNIT=99,FILE='bar.dat',FORM='unformatted',STATUS='unknown', &
-      ! access='direct',recl=k,CONVERT="LITTLE_ENDIAN")
-      ! temp=pbar(1:NK2)
-      ! write(99,rec=1) temp
-      ! temp=pibar(1:NK2)
-      ! write(99,rec=2) temp
-      ! temp=rho(1:NK2)
-      ! write(99,rec=3) temp
-      ! temp=thbar(1:NK2)
-      ! write(99,rec=4) temp
-      ! temp=qvbar(1:NK2)
-      ! write(99,rec=5) temp
-      ! temp=UG(1:NK2)
-      ! write(99,rec=6) temp
-      ! temp=VG(1:NK2)
-      ! write(99,rec=7) temp
-      ! temp=Q1LS(1:NK2)
-      ! write(99,rec=8) temp
-      ! temp=Q2LS(1:NK2)
-      ! write(99,rec=9) temp
-      ! temp=WLS(1:NK2)
-      ! write(99,rec=10) temp
-      ! ! dzt
-      ! DO k=1,nk2
-      !   temp(k) = DZ/FNT(K)
-      ! ENDDO
-      ! write(99,rec=11) temp
-      ! ! theta_e bar
-      ! DO k=1,nk2
-      !   dum1 = THBAR(K)*PIBAR(K) ! temperature
-      !   temp(k) = THBAR(k)*(1+2.5e6*QVBAR(k) / (1004.*dum1 ) )
-      ! ENDDO
-      ! write(99,rec=12) temp
-      ! ! theta_es bar
-      ! DO k=1,nk2
-      !   dum1 = THBAR(K)*PIBAR(K) ! temperature [K]
-      !   dum3 = ES ( dum1 ) ! es[Pa]
-      !   dum2 = dum3 * 0.622 / ( PBAR(K) - dum3 ) ! qvs [kg/kg]
-      !   temp(k) = THBAR(k)*(1+2.5e6*dum2 / (1004.*dum1) ) 
-      ! ENDDO
-      ! write(99,rec=13) temp
-      ! CLOSE(99)
-      ! endif
+      if(my_task == 0) then
+      INQUIRE(iolength=k) temp
+      OPEN(UNIT=99,FILE='bar.dat',FORM='unformatted',STATUS='unknown', &
+      access='direct',recl=k,CONVERT="LITTLE_ENDIAN")
+      temp=pbar(1:NK2)
+      write(99,rec=1) temp
+      temp=pibar(1:NK2)
+      write(99,rec=2) temp
+      temp=rho(1:NK2)
+      write(99,rec=3) temp
+      temp=thbar(1:NK2)
+      write(99,rec=4) temp
+      temp=qvbar(1:NK2)
+      write(99,rec=5) temp
+      temp=UG(1:NK2)
+      write(99,rec=6) temp
+      temp=VG(1:NK2)
+      write(99,rec=7) temp
+      temp=Q1LS(1:NK2)
+      write(99,rec=8) temp
+      temp=Q2LS(1:NK2)
+      write(99,rec=9) temp
+      temp=WLS(1:NK2)
+      write(99,rec=10) temp
+      ! dzt
+      DO k=1,nk2
+        temp(k) = DZ/FNT(K)
+      ENDDO
+      write(99,rec=11) temp
+      ! theta_e bar
+      DO k=1,nk2
+        dum1 = THBAR(K)*PIBAR(K) ! temperature
+        temp(k) = THBAR(k)*(1+2.5e6*QVBAR(k) / (1004.*dum1 ) )
+      ENDDO
+      write(99,rec=12) temp
+      ! theta_es bar
+      DO k=1,nk2
+        dum1 = THBAR(K)*PIBAR(K) ! temperature [K]
+        dum3 = ES ( dum1 ) ! es[Pa]
+        dum2 = dum3 * 0.622 / ( PBAR(K) - dum3 ) ! qvs [kg/kg]
+        temp(k) = THBAR(k)*(1+2.5e6*dum2 / (1004.*dum1) ) 
+      ENDDO
+      write(99,rec=13) temp
+      CLOSE(99)
+      endif
 
 
 !      IF (MY_TASK .EQ. 0) PRINT*,(K,ZT(K),DZ/FNT(K),K=1,NK2)
@@ -263,14 +263,14 @@ CONTAINS
 
       CALL USER_set_3D_perturbation
 
-  !     DO 660 K = 2, NK1
-  !     DO 660 J = 1, MJ1
-  !     DO 660 I = 1, MI1
-  !     Z3DY(I,J,K)=(W3D(I+1,J,K)-W3D(I,J,K))/DX    &
-  !                -(U3DX(I,J,K+1)-U3DX(I,J,K))*FNZ(K)/DZ
-  !     Z3DX(I,J,K)=(W3D(I,J+1,K)-W3D(I,J,K))/DYNEW &
-  !                -(U3DY(I,J,K+1)-U3DY(I,J,K))*FNZ(K)/DZ
-  ! 660 CONTINUE
+      DO 660 K = 2, NK1
+      DO 660 J = 1, MJ1
+      DO 660 I = 1, MI1
+      Z3DY(I,J,K)=(W3D(I+1,J,K)-W3D(I,J,K))/DX    &
+                 -(U3DX(I,J,K+1)-U3DX(I,J,K))*FNZ(K)/DZ
+      Z3DX(I,J,K)=(W3D(I,J+1,K)-W3D(I,J,K))/DYNEW &
+                 -(U3DY(I,J,K+1)-U3DY(I,J,K))*FNZ(K)/DZ
+  660 CONTINUE
 
       restart_read: IF (.false.)THEN
 
@@ -379,6 +379,7 @@ CONTAINS
       twtopo(mi_glob,mj_glob) 
       integer(kind=int_kind) :: ncid,varid,ierr
       INTEGER(KIND=mpi_offset_kind), DIMENSION(4) :: arraystart,readlen
+      INTEGER(KIND=mpi_offset_kind), DIMENSION(1) :: arraystart1d, readlen1d
 
       ITYPEU = 1
       ITYPEV = 1
@@ -396,6 +397,20 @@ CONTAINS
       IF (ierr/=0) stop "inqtopo"
       ierr = nfmpi_get_vara_double_all(ncid,varid,arraystart,readlen,HX(1:MI1,1:MJ1))
       IF (ierr/=0) stop "readtopo"
+
+      ! prepare lon/lat offset for vapor/taiwanvvm output (Shao, 2025.08.18)
+      arraystart1d = (/1/)
+      readlen1d    = (/mi_glob/)
+      ierr = nfmpi_inq_varid(ncid,'lon',varid)
+      IF (ierr/=0) stop "! STOP ! inq_lon"
+      ierr = nfmpi_get_vara_double_all(ncid,varid,arraystart1d,readlen1d,lonc_topo)
+      IF (ierr/=0) stop "! STOP ! read_lonc_topo"
+
+      readlen1d    = (/mj_glob/)
+      ierr = nfmpi_inq_varid(ncid,'lat',varid)
+      IF (ierr/=0) stop "! STOP ! inq_lat"
+      ierr = nfmpi_get_vara_double_all(ncid,varid,arraystart1d,readlen1d,latc_topo)
+      IF (ierr/=0) stop "! STOP ! read_latc_topo"
 
       ierr = nfmpi_close(ncid)
       IF (ierr/=0) stop "closetopo"
@@ -454,6 +469,12 @@ CONTAINS
 #else
       hx=1
       maxtopo=2
+      DO i=1,mi_glob
+          lonc_topo(i) = (dx*i-dx/2.-0.5*(dx*mi_glob))/6.37E6/(2.*pi)*360.
+      ENDDO
+      DO j=1,mj_glob
+          latc_topo(j) = (dynew*j-dynew/2.-0.5*(dynew*mj_glob))/6.37E6/(2.*pi)*360.
+      ENDDO
 #endif
 
       ENDSUBROUTINE PTSPEC

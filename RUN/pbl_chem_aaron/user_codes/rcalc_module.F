@@ -102,6 +102,29 @@ CONTAINS
 #if defined (CHEM)
          do nt = 1,nchem
             CALL ADVEC_3D ( CHEM3D(mim,mjm,1,nt), FCHEM3D(1,1,1,L,nt), term4 )
+#if defined (DIAG)
+            if (nt==1) then
+            do k=2,nk2
+            do j=1,mj1
+            do i=1,mi1
+            DIAG3D(I,J,K,1)=(A*FCHEM3D(I,J,K,N2,nt)+B*FCHEM3D(I,J,K,N1,nt))/PASS_SMALL_DT ! total
+            DIAG3D(I,J,K,2)=term4(i,j,k) ! vertical
+            enddo
+            enddo
+            enddo
+            endif
+
+            if (nt==2) then
+            do k=2,nk2
+            do j=1,mj1
+            do i=1,mi1
+            DIAG3D(I,J,K,6)=(A*FCHEM3D(I,J,K,N2,nt)+B*FCHEM3D(I,J,K,N1,nt))/PASS_SMALL_DT ! total
+            DIAG3D(I,J,K,7)=term4(i,j,k) ! vertical
+            enddo
+            enddo
+            enddo
+            endif
+#endif
          enddo
 #endif
 

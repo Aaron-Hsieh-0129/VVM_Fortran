@@ -26,7 +26,6 @@ SUBROUTINE RADIATION_RRTMG(ITT, NRADD, tg, PBAR, PIBAR, DX, &
       USE radoutld
       USE timeinfo
       USE const3d
-      USE constld, only : casename
       USE bound
       USE utils, only : xyavg2
       USE domain_decomposition
@@ -199,38 +198,29 @@ SUBROUTINE RADIATION_RRTMG(ITT, NRADD, tg, PBAR, PIBAR, DX, &
 !      sstxy(:,:) = tg(:,:)
 
 ! Read in trace gases
-      CALL trace_gas_input(MI1, MJ1, NK2-1, PBAR(2:NK3-1), PBARZ)
+      CALL trace_gas_input(MI1, MJ1, NK2-1, PBAR(2:NK3-1)/100., PBARZ/100.)
 
-   SELECT CASE(trim(casename))
-      CASE ('TWP-ICE')
 !-----------------------------------------------------------------------
-! Override ozone data with TWP-ICE ozone, if needed
-      ch4(:,:,:) = 0.0
-      n2o(:,:,:) = 0.0
-      
-      DO k = 1, NK2-1
-!        o3(:,:,k) = O3BAR_twp(NK2-k+1)
-      o3(:,:,k)= .4800E-07
-      ENDDO
-      CASE ('GATE_PHASE_III')
-      DO k = 1, NK2-1
-!        o3(:,:,k) = O3BAR_gate(NK2-k+1)
-      o3(:,:,k)= .4800E-07
-      co2(:,:,k)=0.54e-3
-      ch4(:,:,k)=0.94e-6
-      n2o(:,:,k)=0.486e-6
-      o2(:,:,k)=0.23
-      ENDDO
-      END SELECT
-
-      !! use for rcemip (Der)
+! Override ozone data with gas profile, if needed
+      !! use for GATE_PAHSED_III
       !DO k = 1, NK2-1
-      !o3(:,:,k)=(3.64478*pres(k)**(0.83209))*exp(-pres(k)/11.3515)*1.e-6
-      !co2(:,:,k)=348.e-6
-      !ch4(:,:,k)=1650.e-9
-      !n2o(:,:,k)=306.e-9
-      !o2(:,:,k)=0.23
+      !! o3(:,:,k) = O3BAR_gate(NK2-k+1)
+      !  o3(:,:,k)= .4800E-07
+      !  co2(:,:,k)=0.54e-3
+      !  ch4(:,:,k)=0.94e-6
+      !  n2o(:,:,k)=0.486e-6
+      !  o2(:,:,k)=0.23
       !ENDDO
+
+      ! use for rcemip (Der) and default
+      DO k = 1, NK2-1
+      o3(:,:,k)=(3.6478*pres(k)**(0.83209))*exp(-pres(k)/11.3515)*1.e-6
+      co2(:,:,k)=348.e-6
+      ch4(:,:,k)=1650.e-9
+      n2o(:,:,k)=306.e-9
+      ! o2(:,:,k)=0.23
+      o2(:,:,k)=0.209
+      ENDDO
 
   if(masterproc) then
       print*,' '

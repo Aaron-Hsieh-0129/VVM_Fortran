@@ -102,20 +102,20 @@ CONTAINS
       Z3DZ(I,J,NK2)=Z3DZ(I,J,NK2)+A*FZTOP(I,J,N2)+B*FZTOP(I,J,N1)
   100 CONTINUE
 
-  !     DO 110 K=NK1,1,-1
-  !     DO 110 J=1,MJ1
-  !     DO 110 I=1,MI1
-  !     Z3DZ(I,J,K)=Z3DZ(I,J,K+1)                       &
-  !      +(Z3DX(I+1,J,K)-Z3DX(I,J,K))*DZ/(DX*FNZ(K))    &
-  !      -(Z3DY(I,J+1,K)-Z3DY(I,J,K))*DZ/(DYNEW*FNZ(K))
-  ! 110 CONTINUE
-  !
-  !     DO 150 J=1,MJ1
-  !     DO 150 I=1,MI1
-  !     Z3DZ(I,J,NK3)=Z3DZ(I,J,NK2)                         &
-  !      -(Z3DX(I+1,J,NK2)-Z3DX(I,J,NK2))*DZ/(DX*FNZ(NK2))  &
-  !      +(Z3DY(I,J+1,NK2)-Z3DY(I,J,NK2))*DZ/(DYNEW*FNZ(NK2))
-  ! 150 CONTINUE
+      DO 110 K=NK1,1,-1
+      DO 110 J=1,MJ1
+      DO 110 I=1,MI1
+      Z3DZ(I,J,K)=Z3DZ(I,J,K+1)                       &
+       +(Z3DX(I+1,J,K)-Z3DX(I,J,K))*DZ/(DX*FNZ(K))    &
+       -(Z3DY(I,J+1,K)-Z3DY(I,J,K))*DZ/(DYNEW*FNZ(K))
+  110 CONTINUE
+
+      DO 150 J=1,MJ1
+      DO 150 I=1,MI1
+      Z3DZ(I,J,NK3)=Z3DZ(I,J,NK2)                         &
+       -(Z3DX(I+1,J,NK2)-Z3DX(I,J,NK2))*DZ/(DX*FNZ(NK2))  &
+       +(Z3DY(I,J+1,NK2)-Z3DY(I,J,NK2))*DZ/(DYNEW*FNZ(NK2))
+  150 CONTINUE
 
       CALL BOUND_3D_Z
 
@@ -162,14 +162,26 @@ CONTAINS
   410 CONTINUE
       END IF
 
-   SELECT CASE (TRIM(casename))
-   CASE ('TWP-ICE')
-! - TWP-ICE CONDITION ^^ nudge ONLY above 500 m
-      nudgelim = 500.
-   CASE DEFAULT
 ! nudge all levels
       nudgelim = 0.
-   END SELECT
+
+#if defined (TOPOGRAPHY)
+!ccwu set vorticity inside topograhy to be zero
+      DO  K = 2,NK1
+      IF ( ZZ(K) .GE. nudgelim) THEN
+       DO  J = 1,MJ1
+        DO  I = 1,MI1
+        IF(ITYPEV(I,J,K) .EQ. 1) THEN
+        Z3DX(I,J,K) = Z3DX(I,J,K) - SUMX(K) + SUMXN(K)
+        ENDIF
+        IF(ITYPEU(I,J,K) .EQ. 1) THEN
+        Z3DY(I,J,K) = Z3DY(I,J,K) - SUMY(K) + SUMYN(K)
+        ENDIF
+        ENDDO
+       ENDDO
+      END IF
+     ENDDO
+#else
       DO 420 K = 2,NK1
       IF ( ZZ(K) .GE. nudgelim) THEN
       DO 421 J = 1,MJ1
@@ -179,6 +191,7 @@ CONTAINS
   421 CONTINUE
       END IF
   420 CONTINUE
+#endif
 
 !      SUMZ=0.
       call xyavg1(z3dz(mim,mjm,nk2),nhalo,mi1,mj1,sumz)
@@ -405,12 +418,8 @@ CONTAINS
       DO 500 K = 2,NK1
       DO 500 J = 1,MJ1
       DO 500 I = 1,MI1
-      ! FZX(I,J,K,L)=FZX(I,J,K,L)                       &
-      !             +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
-      ! Stretching
-      ! FZX(I,J,K,L)=TERM1(I,J,K)
-      ! Twisting
-      FZX(I,J,K,L)=TERM2(I,J,K)+TERM3(I,J,K)
+      FZX(I,J,K,L)=FZX(I,J,K,L)                       &
+                  +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
   500 CONTINUE
 
 
@@ -645,12 +654,8 @@ CONTAINS
       DO 500 K = 2,NK1
       DO 500 J = 1,MJ1
       DO 500 I = 1,MI1
-      ! FZY(I,J,K,L)=FZY(I,J,K,L)                            &
-      !             +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
-      ! Stretching
-      ! FZY(I,J,K,L)=TERM1(I,J,K)
-      ! Twisting
-      FZY(I,J,K,L)=TERM2(I,J,K)+TERM3(I,J,K)
+      FZY(I,J,K,L)=FZY(I,J,K,L)                            &
+                  +TERM1(I,J,K)+TERM2(I,J,K)+TERM3(I,J,K)
   500 CONTINUE
 
 #if defined (CORIOLIS)
@@ -929,12 +934,8 @@ CONTAINS
 
       DO 960 J=1,MJ1
       DO 960 I=1,MI1
-      ! FZTOP(I,J,L)=FZTOP(I,J,L)         &
-      !             +TERM1(I,J,1)+TERM2(I,J,1)+TERM3(I,J,1)
-      ! Stretching
-      ! FZTOP(I,J,L)=TERM1(I,J,1)
-      ! Twisting
-      FZTOP(I,J,L)=TERM2(I,J,1)+TERM3(I,J,1)
+      FZTOP(I,J,L)=FZTOP(I,J,L)         &
+                  +TERM1(I,J,1)+TERM2(I,J,1)+TERM3(I,J,1)
   960 CONTINUE
 
 #if defined (CORIOLIS)
